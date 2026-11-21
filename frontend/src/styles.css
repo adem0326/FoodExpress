@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --terracotta: #D6834F;
+  --ocre: #E6AE74;
+  --cinnamon: #A35233;
+  --cream: #FFF8F6;
+  --espresso: #42281C;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; min-height: 100%; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--espresso);
+  background: var(--cream);
+}
+
+button, input { font: inherit; }
+
+.account-page {
+  min-height: 100dvh;
+  padding: 32px 16px;
+  display: grid;
+  place-items: center;
+}
+
+.account-card {
+  width: min(620px, 100%);
+  padding: clamp(24px, 5vw, 40px);
+  border: 1px solid #ead8ce;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 16px 48px rgba(66, 40, 28, .08);
+}
+
+.account-card h1 {
+  margin: 0 0 8px;
+  font-family: 'Epilogue', sans-serif;
+}
+
+.account-card > p { color: #7b5d50; }
+
+.account-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin: 20px 0;
+}
+
+.account-nav a {
+  color: var(--cinnamon);
+  font-weight: 600;
+}
+
+.account-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.account-field label { font-weight: 600; }
+
+.account-field input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid #dfc9be;
+  border-radius: 12px;
+  color: var(--espresso);
+  background: #fff;
+}
+
+.account-field input:focus {
+  outline: 2px solid rgba(214, 131, 79, .35);
+  border-color: var(--terracotta);
+}
+
+.account-field small, .account-error { color: #9c3b31; }
+.account-success { color: #3f6d43; }
+
+.account-button {
+  min-height: 48px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--terracotta);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.account-button:disabled { opacity: .65; cursor: wait; }
+
+.profile-details { display: grid; gap: 14px; }
+.profile-details div { padding-bottom: 12px; border-bottom: 1px solid #f0e5df; }
+.profile-details dt { color: #7b5d50; font-size: 14px; }
+.profile-details dd { margin: 4px 0 0; font-weight: 600; }

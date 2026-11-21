@@ -1,0 +1,37 @@
+<main class="account-page">
+  <section class="account-card" aria-labelledby="edit-profile-title">
+    <h1 id="edit-profile-title">Modifier mon profil</h1>
+    <nav class="account-nav" aria-label="Navigation du profil">
+      <a routerLink="/profile">Retour au profil</a>
+      <a routerLink="/change-password">Changer le mot de passe</a>
+    </nav>
+
+    @if (isLoading()) {
+      <p role="status">Chargement du profil...</p>
+    } @else {
+      @if (errorMessage()) { <p class="account-error" role="alert">{{ errorMessage() }}</p> }
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="account-field">
+          <label for="prenom">Prénom</label>
+          <input id="prenom" formControlName="prenom" autocomplete="given-name" />
+          @if (form.controls.prenom.touched && form.controls.prenom.invalid) { <small>Le prénom est requis.</small> }
+        </div>
+        <div class="account-field">
+          <label for="nom">Nom</label>
+          <input id="nom" formControlName="nom" autocomplete="family-name" />
+          @if (form.controls.nom.touched && form.controls.nom.invalid) { <small>Le nom est requis.</small> }
+        </div>
+        <div class="account-field">
+          <label for="telephone">Téléphone</label>
+          <input id="telephone" type="tel" formControlName="telephone" autocomplete="tel" />
+          @if (form.controls.telephone.touched && form.controls.telephone.hasError('required')) { <small>Le téléphone est requis.</small> }
+          @if (form.controls.telephone.touched && form.controls.telephone.hasError('telephone')) { <small>Entrez un numéro valide de 7 à 15 chiffres.</small> }
+        </div>
+        <button class="account-button" type="submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+        </button>
+      </form>
+    }
+  </section>
+</main>

@@ -1,0 +1,3 @@
+@import '../register/register.component.css';
+
+.recovery-contact { margin: -4px 0 0; color: var(--cinnamon); font-size: 13px; font-weight: 600; line-height: 1.4; }

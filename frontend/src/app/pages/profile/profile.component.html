@@ -1,0 +1,24 @@
+<main class="account-page">
+  <section class="account-card" aria-labelledby="profile-title">
+    <h1 id="profile-title">Mon profil</h1>
+    <nav class="account-nav" aria-label="Actions du profil">
+      <a routerLink="/edit-profile">Modifier le profil</a>
+      <a routerLink="/change-password">Changer le mot de passe</a>
+      <a [routerLink]="auth.getHomeRoute()">Retour à mon espace</a>
+    </nav>
+
+    @if (isLoading()) {
+      <p role="status">Chargement du profil...</p>
+    } @else if (errorMessage()) {
+      <p class="account-error" role="alert">{{ errorMessage() }}</p>
+    } @else if (user(); as profile) {
+      <dl class="profile-details">
+        <div><dt>Prénom</dt><dd>{{ profile.prenom }}</dd></div>
+        <div><dt>Nom</dt><dd>{{ profile.nom }}</dd></div>
+        <div><dt>Email</dt><dd>{{ profile.email }}</dd></div>
+        <div><dt>Téléphone</dt><dd>{{ profile.telephone }}</dd></div>
+        <div><dt>Rôle</dt><dd>{{ profile.role }}</dd></div>
+      </dl>
+    }
+  </section>
+</main>
