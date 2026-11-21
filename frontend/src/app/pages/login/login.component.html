@@ -1,46 +1,92 @@
-<main class="auth-page">
-  <section class="brand-panel" aria-label="FoodExpress">
-    <div class="brand-mark">FE</div>
-    <h1>FoodExpress</h1>
-    <p>Vos plats préférés, préparés avec passion et livrés près de vous.</p>
-  </section>
+<div class="fe-auth-root">
+  <header class="fe-auth-topbar">
+    <a class="fe-brand" routerLink="/login" aria-label="FoodExpress">
+      <span class="fe-brand-mark" aria-hidden="true">FE</span>
+      <span class="fe-brand-name">FoodExpress</span>
+    </a>
+    <a class="fe-text-link" routerLink="/register">Créer un compte</a>
+  </header>
 
-  <section class="auth-card" aria-labelledby="login-title">
-    <h2 id="login-title">Bon retour</h2>
-    <p class="subtitle">Connectez-vous à votre compte FoodExpress</p>
+  <main class="fe-auth-page">
+    <div class="fe-auth-card">
+      <section class="fe-auth-form-panel" aria-labelledby="login-title">
+        <div class="fe-auth-form-inner">
+          <div class="fe-badge-row">
+            <span class="fe-badge fe-badge-warm">
+              <span class="material-symbols-outlined" aria-hidden="true" style="font-size: 15px;">eco</span>
+              Saveurs locales
+            </span>
+          </div>
 
-    @if (auth.isLoggedIn()) {
-      <div class="session-row">
-        <span>Connecté{{ auth.getCurrentUser()?.prenom ? ' en tant que ' + auth.getCurrentUser()?.prenom : '' }}</span>
-        <button type="button" class="text-button" (click)="logout()">Se déconnecter</button>
-      </div>
-    }
-    @if (successMessage()) { <div class="alert success" role="status">{{ successMessage() }}</div> }
-    @if (errorMessage()) { <div class="alert error" role="alert">{{ errorMessage() }}</div> }
+          <div>
+            <h1 id="login-title" class="fe-headline-md">Bon retour</h1>
+            <p class="fe-body-md fe-muted">Connectez-vous à votre compte FoodExpress</p>
+          </div>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <div class="field">
-        <label for="email">Email</label>
-        <input id="email" type="email" formControlName="email" autocomplete="email" placeholder="nom@exemple.com" />
-        @if (form.controls.email.touched && form.controls.email.hasError('required')) { <small>L'email est requis.</small> }
-        @if (form.controls.email.touched && form.controls.email.hasError('email')) { <small>Format email invalide.</small> }
-      </div>
-      <div class="field">
-        <div class="label-row">
-          <label for="password">Mot de passe</label>
+          @if (auth.isLoggedIn()) {
+            <div class="session-row">
+              <span>Connecté{{ auth.getCurrentUser()?.prenom ? ' en tant que ' + auth.getCurrentUser()?.prenom : '' }}</span>
+              <button type="button" class="text-button" (click)="logout()">Se déconnecter</button>
+            </div>
+          }
+          @if (successMessage()) { <div class="alert success" role="status">{{ successMessage() }}</div> }
+          @if (errorMessage()) { <div class="alert error" role="alert">{{ errorMessage() }}</div> }
+
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="fe-form">
+            <div class="fe-field">
+              <label for="email">Email</label>
+              <div class="fe-input-wrap">
+                <span class="material-symbols-outlined fe-input-icon" aria-hidden="true">alternate_email</span>
+                <input id="email" class="fe-input fe-input-with-icon" type="email" formControlName="email" autocomplete="email" placeholder="nom@exemple.com" />
+              </div>
+              @if (form.controls.email.touched && form.controls.email.hasError('required')) { <small class="fe-error">L'email est requis.</small> }
+              @if (form.controls.email.touched && form.controls.email.hasError('email')) { <small class="fe-error">Format email invalide.</small> }
+            </div>
+
+            <div class="fe-field">
+              <div class="label-row">
+                <label for="password">Mot de passe</label>
+              </div>
+              <div class="fe-input-wrap">
+                <span class="material-symbols-outlined fe-input-icon" aria-hidden="true">lock</span>
+                <input id="password" class="fe-input fe-input-with-icon fe-input-with-affix" [type]="showPassword ? 'text' : 'password'" formControlName="password" autocomplete="current-password" placeholder="Votre mot de passe" />
+                <button type="button" class="fe-input-affix" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">{{ showPassword ? 'Masquer' : 'Afficher' }}</button>
+              </div>
+              @if (showAdminContactMessage()) {
+                <p class="fe-recovery-contact">Forgot your password? Please contact the administrator to reset your account.</p>
+              }
+              @if (form.controls.password.touched && form.controls.password.hasError('required')) { <small class="fe-error">Le mot de passe est requis.</small> }
+            </div>
+
+            <button class="fe-btn fe-btn-primary fe-btn-block" type="submit" [disabled]="isSubmitting()">
+              <span>{{ isSubmitting() ? 'Connexion...' : 'Se connecter' }}</span>
+              <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+            </button>
+          </form>
+
+          <div class="fe-auth-divider">ou</div>
+
+          <p class="fe-auth-footnote">Nouveau sur FoodExpress ? <a routerLink="/register">Créer un compte</a></p>
         </div>
-        <div class="password-field">
-          <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" autocomplete="current-password" placeholder="Votre mot de passe" />
-          <button type="button" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">{{ showPassword ? 'Masquer' : 'Afficher' }}</button>
-        </div>
-        @if (showAdminContactMessage()) {
-          <p class="recovery-contact">Forgot your password? Please contact the administrator to reset your account.</p>
-        }
-        @if (form.controls.password.touched && form.controls.password.hasError('required')) { <small>Le mot de passe est requis.</small> }
-      </div>
-      <button class="primary-button" type="submit" [disabled]="isSubmitting()">{{ isSubmitting() ? 'Connexion...' : 'Se connecter' }}</button>
-    </form>
+      </section>
 
-    <p class="auth-link">Nouveau sur FoodExpress ? <a routerLink="/register">Créer un compte</a></p>
-  </section>
-</main>
+      <aside class="fe-auth-showcase" aria-label="FoodExpress">
+        <span class="fe-showcase-badge">Terroir &amp; artisanat</span>
+        <p class="fe-display-md fe-showcase-quote">Vos plats préférés, préparés avec passion et livrés près de vous.</p>
+        <div class="fe-showcase-tile">
+          <span class="material-symbols-outlined" aria-hidden="true">electric_moped</span>
+          <div>
+            <strong>FoodExpress</strong>
+            <small>Une cuisine de terroir, à deux pas de chez vous.</small>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="fe-footer">
+    <div class="fe-footer-inner fe-auth-footer-inner">
+      <span>FoodExpress · Terroir &amp; Restauration Artisanale</span>
+    </div>
+  </footer>
+</div>

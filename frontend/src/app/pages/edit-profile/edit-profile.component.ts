@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { FlashMessageService } from '../../services/flash-message.service';
+import { AppShellComponent } from '../../shared/app-shell.component';
 
 function nonBlank(control: AbstractControl): ValidationErrors | null {
   return typeof control.value === 'string' && control.value.trim() ? null : { required: true };
@@ -22,12 +23,12 @@ function validTelephone(control: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-edit-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, AppShellComponent],
   templateUrl: './edit-profile.component.html'
 })
 export class EditProfileComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private auth = inject(AuthService);
+  readonly auth = inject(AuthService);
   private router = inject(Router);
   private flashMessage = inject(FlashMessageService);
 

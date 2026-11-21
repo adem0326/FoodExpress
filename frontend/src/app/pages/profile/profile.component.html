@@ -1,24 +1,67 @@
-<main class="account-page">
-  <section class="account-card" aria-labelledby="profile-title">
-    <h1 id="profile-title">Mon profil</h1>
-    <nav class="account-nav" aria-label="Actions du profil">
-      <a routerLink="/edit-profile">Modifier le profil</a>
-      <a routerLink="/change-password">Changer le mot de passe</a>
-      <a [routerLink]="auth.getHomeRoute()">Retour à mon espace</a>
+<app-shell>
+  <main class="fe-container fe-page">
+    <nav class="fe-breadcrumb" aria-label="Fil d'Ariane">
+      <a [routerLink]="auth.getHomeRoute()">Accueil</a>
+      <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+      <span aria-current="page">Mon profil</span>
+    </nav>
+
+    <header class="fe-page-header">
+      <div>
+        <span class="fe-eyebrow">Espace gourmet · FoodExpress</span>
+        <h1 class="fe-display-sm">Mon profil</h1>
+        <p class="fe-body-md fe-muted">Gérez vos coordonnées et la sécurité de votre compte.</p>
+      </div>
+      <a class="fe-btn fe-btn-secondary" [routerLink]="auth.getHomeRoute()">
+        <span class="material-symbols-outlined" aria-hidden="true">space_dashboard</span>
+        Retour à mon espace
+      </a>
+    </header>
+
+    <nav class="fe-pill-nav" aria-label="Actions du profil">
+      <span class="fe-pill is-active" aria-current="page">
+        <span class="material-symbols-outlined" aria-hidden="true">badge</span>
+        Vue d'ensemble
+      </span>
+      <a class="fe-pill" routerLink="/edit-profile">
+        <span class="material-symbols-outlined" aria-hidden="true">edit_note</span>
+        Modifier le profil
+      </a>
+      <a class="fe-pill" routerLink="/change-password">
+        <span class="material-symbols-outlined" aria-hidden="true">lock_reset</span>
+        Changer le mot de passe
+      </a>
     </nav>
 
     @if (isLoading()) {
-      <p role="status">Chargement du profil...</p>
+      <p class="fe-hint" role="status">Chargement du profil...</p>
     } @else if (errorMessage()) {
-      <p class="account-error" role="alert">{{ errorMessage() }}</p>
+      <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
     } @else if (user(); as profile) {
-      <dl class="profile-details">
-        <div><dt>Prénom</dt><dd>{{ profile.prenom }}</dd></div>
-        <div><dt>Nom</dt><dd>{{ profile.nom }}</dd></div>
-        <div><dt>Email</dt><dd>{{ profile.email }}</dd></div>
-        <div><dt>Téléphone</dt><dd>{{ profile.telephone }}</dd></div>
-        <div><dt>Rôle</dt><dd>{{ profile.role }}</dd></div>
-      </dl>
+      <section class="fe-card" aria-labelledby="profile-title">
+        <div class="fe-profile-identity">
+          <div class="fe-avatar fe-avatar-lg" aria-hidden="true">{{ (profile.prenom || '').charAt(0) }}{{ (profile.nom || '').charAt(0) }}</div>
+          <div>
+            <h2 id="profile-title" class="fe-headline-md">{{ profile.prenom }} {{ profile.nom }}</h2>
+            <p class="fe-muted">{{ profile.email }}</p>
+            @if (profile.role) { <span class="fe-badge fe-badge-warm">{{ profile.role }}</span> }
+          </div>
+        </div>
+
+        <div class="fe-divider"></div>
+
+        <h3 class="fe-section-label fe-section-label--inset">
+          <span class="material-symbols-outlined" aria-hidden="true">contact_page</span>
+          Informations du compte
+        </h3>
+        <dl class="profile-details fe-detail-grid">
+          <div class="fe-detail"><dt>Prénom</dt><dd>{{ profile.prenom }}</dd></div>
+          <div class="fe-detail"><dt>Nom</dt><dd>{{ profile.nom }}</dd></div>
+          <div class="fe-detail"><dt>Email</dt><dd>{{ profile.email }}</dd></div>
+          <div class="fe-detail"><dt>Téléphone</dt><dd>{{ profile.telephone }}</dd></div>
+          <div class="fe-detail"><dt>Rôle</dt><dd>{{ profile.role }}</dd></div>
+        </dl>
+      </section>
     }
-  </section>
-</main>
+  </main>
+</app-shell>

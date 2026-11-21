@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { User } from '../../models/auth.models';
 import { AuthService } from '../../services/auth.service';
+import { AppShellComponent } from '../../shared/app-shell.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AppShellComponent],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {

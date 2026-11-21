@@ -2,83 +2,130 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FlashMessageService } from '../../services/flash-message.service';
+import { AppShellComponent } from '../../shared/app-shell.component';
 
 @Component({
   selector: 'app-role-space',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AppShellComponent],
   template: `
-    <main class="role-space">
-      <div class="dashboard-shell">
-        <header class="dashboard-header">
-          <div>
-            <p class="eyebrow">FoodExpress</p>
-            <h1>Bienvenue, {{ currentUser()?.prenom }} {{ currentUser()?.nom }}</h1>
-            <p class="welcome-copy">{{ title }} · Gérez les informations de votre compte.</p>
+    <app-shell>
+      <main class="role-space">
+        <section class="fe-hero">
+          <div class="fe-hero-glow fe-hero-glow-a" aria-hidden="true"></div>
+          <div class="fe-hero-glow fe-hero-glow-b" aria-hidden="true"></div>
+          <div class="fe-container fe-hero-inner">
+            <div class="fe-hero-copy">
+              <span class="fe-badge fe-badge-warm">
+                <span class="material-symbols-outlined" aria-hidden="true" style="font-size: 15px;">verified</span>
+                {{ title }}
+              </span>
+              <h1 class="fe-headline-lg">Bienvenue, {{ currentUser()?.prenom }} {{ currentUser()?.nom }}</h1>
+              <p class="fe-body-lg fe-muted">{{ title }} — Gérez les informations de votre compte.</p>
+              <div class="fe-trust-list" aria-hidden="true">
+                <span><span class="material-symbols-outlined">agriculture</span> Producteurs &amp; artisans locaux</span>
+                <span><span class="material-symbols-outlined">pedal_bike</span> Livraison douce</span>
+                <span><span class="material-symbols-outlined">verified</span> Fraîcheur du jour</span>
+              </div>
+            </div>
+            <button class="fe-btn fe-btn-secondary" type="button" (click)="logout()">
+              <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+              Se déconnecter
+            </button>
           </div>
-          <button class="logout-button" type="button" (click)="logout()">Se déconnecter</button>
-        </header>
-
-        @if (flashMessage.message()) {
-          <p class="success-notice" role="status">{{ flashMessage.message() }}</p>
-        }
-
-        <section class="dashboard-section" aria-labelledby="dashboard-title">
-          <h2 id="dashboard-title">{{ dashboardTitle }}</h2>
-          <nav class="dashboard-actions" aria-label="Gestion du compte">
-            <a class="dashboard-action" routerLink="/profile">
-              <span>Mon profil</span>
-              <small>Consulter vos informations</small>
-            </a>
-            <a class="dashboard-action" routerLink="/edit-profile">
-              <span>Modifier le profil</span>
-              <small>Mettre à jour votre nom et téléphone</small>
-            </a>
-            <a class="dashboard-action" routerLink="/change-password">
-              <span>Changer le mot de passe</span>
-              <small>Sécuriser votre compte</small>
-            </a>
-          </nav>
         </section>
-        @if (currentUser()?.role === 'admin') {
-          <section class="dashboard-section user-management-section" aria-labelledby="user-management-title">
-            <h2 id="user-management-title">Gestion des utilisateurs</h2>
-            <p>Consultez et gérez les comptes de la plateforme depuis l'espace d'administration.</p>
-            <a class="dashboard-action user-management-link" routerLink="/admin/users">
-              <span>Gérer les utilisateurs</span>
-              <small>Ouvrir la liste des comptes</small>
-            </a>
+
+        <div class="fe-container fe-page">
+          @if (flashMessage.message()) {
+            <p class="fe-alert fe-alert-success" role="status">{{ flashMessage.message() }}</p>
+          }
+
+          <section class="dashboard-section" aria-labelledby="dashboard-title">
+            <div class="fe-section-heading">
+              <div>
+                <span class="fe-section-dot" aria-hidden="true"></span>
+                <h2 id="dashboard-title" class="fe-headline-md">{{ dashboardTitle }}</h2>
+              </div>
+              <span class="fe-badge">Gestion du compte</span>
+            </div>
+
+            <nav class="fe-bento-grid" aria-label="Gestion du compte">
+              <a class="fe-action-card" routerLink="/profile">
+                <div class="fe-action-card-top">
+                  <span class="fe-icon-tile"><span class="material-symbols-outlined" aria-hidden="true">badge</span></span>
+                  <span class="material-symbols-outlined fe-action-arrow" aria-hidden="true">arrow_forward</span>
+                </div>
+                <div>
+                  <h3>Mon profil</h3>
+                  <p>Consulter vos informations</p>
+                </div>
+                <span class="fe-action-card-footer">Afficher la fiche</span>
+              </a>
+
+              <a class="fe-action-card" routerLink="/edit-profile">
+                <div class="fe-action-card-top">
+                  <span class="fe-icon-tile"><span class="material-symbols-outlined" aria-hidden="true">edit_note</span></span>
+                  <span class="material-symbols-outlined fe-action-arrow" aria-hidden="true">arrow_forward</span>
+                </div>
+                <div>
+                  <h3>Modifier le profil</h3>
+                  <p>Mettre à jour votre nom et téléphone</p>
+                </div>
+                <span class="fe-action-card-footer">Éditer les informations</span>
+              </a>
+
+              <a class="fe-action-card" routerLink="/change-password">
+                <div class="fe-action-card-top">
+                  <span class="fe-icon-tile"><span class="material-symbols-outlined" aria-hidden="true">lock_reset</span></span>
+                  <span class="material-symbols-outlined fe-action-arrow" aria-hidden="true">arrow_forward</span>
+                </div>
+                <div>
+                  <h3>Changer le mot de passe</h3>
+                  <p>Sécuriser votre compte</p>
+                </div>
+                <span class="fe-action-card-footer">Gérer la sécurité</span>
+              </a>
+            </nav>
           </section>
-        }
-      </div>
-    </main>
+
+          @if (currentUser()?.role === 'admin') {
+            <section class="dashboard-section user-management-section" aria-labelledby="user-management-title">
+              <div class="fe-section-heading">
+                <div>
+                  <span class="fe-section-dot" aria-hidden="true"></span>
+                  <h2 id="user-management-title" class="fe-headline-md">Gestion des utilisateurs</h2>
+                </div>
+              </div>
+              <p class="fe-body-md fe-muted">Consultez et gérez les comptes de la plateforme depuis l'espace d'administration.</p>
+              <nav class="fe-bento-grid" aria-label="Gestion des utilisateurs">
+                <a class="fe-action-card" routerLink="/admin/users">
+                  <div class="fe-action-card-top">
+                    <span class="fe-icon-tile"><span class="material-symbols-outlined" aria-hidden="true">admin_panel_settings</span></span>
+                    <span class="material-symbols-outlined fe-action-arrow" aria-hidden="true">arrow_forward</span>
+                  </div>
+                  <div>
+                    <h3>Gérer les utilisateurs</h3>
+                    <p>Ouvrir la liste des comptes</p>
+                  </div>
+                  <span class="fe-action-card-footer">Ouvrir l'administration</span>
+                </a>
+              </nav>
+            </section>
+          }
+        </div>
+      </main>
+    </app-shell>
   `,
   styles: [`
     :host { display: block; min-height: 100dvh; }
-    .role-space { min-height: 100dvh; padding: clamp(24px, 6vw, 72px); background: #FFF8F6; color: #42281C; }
-    .dashboard-shell { width: min(1000px, 100%); margin: 0 auto; }
-    .dashboard-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 36px; }
-    .eyebrow { margin: 0 0 12px; color: #A35233; font-weight: 700; letter-spacing: .04em; }
-    h1, h2 { font-family: Epilogue, sans-serif; }
-    h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
-    .welcome-copy { color: #7b5d50; line-height: 1.6; }
-    .success-notice { margin: 0 0 24px; padding: 14px 18px; border: 1px solid #b9dfc0; border-radius: 12px; color: #246b36; background: #eef8ef; }
-    .dashboard-section { padding: clamp(24px, 4vw, 36px); border: 1px solid #ead8ce; border-radius: 20px; background: #fff; box-shadow: 0 16px 48px rgba(66,40,28,.08); }
-    .user-management-section { margin-top: 24px; }
-    h2 { margin: 0 0 24px; font-size: 24px; }
-    .user-management-section p { color: #7b5d50; line-height: 1.6; }
-    .dashboard-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
-    .user-management-link { width: min(320px, 100%); min-height: 88px; }
-    .dashboard-action { display: flex; min-height: 112px; flex-direction: column; justify-content: center; gap: 8px; padding: 20px; border: 1px solid #ead8ce; border-radius: 14px; color: #42281C; background: #fffaf7; text-decoration: none; transition: border-color .2s, transform .2s; }
-    .dashboard-action:hover { transform: translateY(-2px); border-color: #D6834F; }
-    .dashboard-action span { color: #A35233; font-weight: 700; }
-    .dashboard-action small { color: #7b5d50; line-height: 1.5; }
-    .logout-button { flex: 0 0 auto; margin-top: 4px; padding: 12px 20px; border: 0; border-radius: 12px; color: #fff; background: #D6834F; font-weight: 600; cursor: pointer; }
-    .logout-button:hover { background: #A35233; }
-    @media (max-width: 640px) {
-      .dashboard-header { flex-direction: column; }
-      .logout-button { align-self: stretch; }
+    .dashboard-section {
+      padding: clamp(24px, 4vw, 36px);
+      border: 1px solid var(--fe-card-border);
+      border-radius: var(--fe-radius-lg);
+      background: var(--fe-surface-container-lowest);
+      box-shadow: var(--fe-shadow-card);
     }
+    .user-management-section p { margin: 0 0 var(--fe-space-lg); }
   `]
 })
 export class RoleSpaceComponent {

@@ -1,3 +1,12 @@
-@import '../register/register.component.css';
+:host {
+  display: block;
+  min-height: 100dvh;
+}
 
-.recovery-contact { margin: -4px 0 0; color: var(--cinnamon); font-size: 13px; font-weight: 600; line-height: 1.4; }
+.recovery-contact {
+  margin: -4px 0 0;
+  color: var(--fe-secondary);
+  font-size: var(--fe-body-sm-size);
+  font-weight: 600;
+  line-height: 1.45;
+}
