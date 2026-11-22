@@ -109,6 +109,41 @@ import { AppShellComponent } from '../../shared/app-shell.component';
                   </div>
                   <span class="fe-action-card-footer">Ouvrir l'administration</span>
                 </a>
+                <a class="fe-action-card" routerLink="/admin/restaurants">
+                  <div class="fe-action-card-top">
+                    <span class="fe-icon-tile"><span class="material-symbols-outlined" aria-hidden="true">restaurant</span></span>
+                    <span class="material-symbols-outlined fe-action-arrow" aria-hidden="true">arrow_forward</span>
+                  </div>
+                  <div>
+                    <h3>Gérer les restaurants</h3>
+                    <p>Valider, suspendre et modifier les établissements</p>
+                  </div>
+                  <span class="fe-action-card-footer">Ouvrir la gestion</span>
+                </a>
+              </nav>
+            </section>
+          }
+          @if (currentUser()?.role === 'restaurateur') {
+            <section class="dashboard-section user-management-section" aria-labelledby="restaurant-management-title">
+              <div class="fe-section-heading">
+                <div>
+                  <span class="fe-section-dot" aria-hidden="true"></span>
+                  <h2 id="restaurant-management-title" class="fe-headline-md">Gestion des restaurants</h2>
+                </div>
+              </div>
+              <p class="fe-body-md fe-muted">Gérez uniquement les établissements dont vous êtes le propriétaire.</p>
+              <nav class="fe-bento-grid" aria-label="Gestion des restaurants">
+                <a class="fe-action-card" routerLink="/restaurateur/restaurants">
+                  <div class="fe-action-card-top">
+                    <span class="fe-icon-tile"><span class="material-symbols-outlined" aria-hidden="true">storefront</span></span>
+                    <span class="material-symbols-outlined fe-action-arrow" aria-hidden="true">arrow_forward</span>
+                  </div>
+                  <div>
+                    <h3>Mes restaurants</h3>
+                    <p>Ajouter, modifier ou supprimer vos établissements</p>
+                  </div>
+                  <span class="fe-action-card-footer">Ouvrir la gestion</span>
+                </a>
               </nav>
             </section>
           }

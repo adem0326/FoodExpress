@@ -3,7 +3,31 @@ import { authGuard, guestGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  {
+    path: 'home',
+    loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent)
+  },
+  {
+    path: 'restaurants',
+    loadComponent: () => import('./pages/restaurants/restaurants.component').then((m) => m.RestaurantsComponent)
+  },
+  {
+    path: 'restaurants/:id',
+    loadComponent: () => import('./pages/restaurant-details/restaurant-details.component').then((m) => m.RestaurantDetailsComponent)
+  },
+  {
+    path: 'admin/restaurants',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['admin'] },
+    loadComponent: () => import('./pages/manage-restaurants/manage-restaurants.component').then((m) => m.ManageRestaurantsComponent)
+  },
+  {
+    path: 'restaurateur/restaurants',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['restaurateur'] },
+    loadComponent: () => import('./pages/manage-restaurants/manage-restaurants.component').then((m) => m.ManageRestaurantsComponent)
+  },
   {
     path: 'register',
     loadComponent: () => import('./pages/register/register.component').then((m) => m.RegisterComponent)

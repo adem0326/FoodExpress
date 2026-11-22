@@ -1,0 +1,37 @@
+<app-shell>
+  <main class="fe-page restaurant-details-page">
+    @if (errorMessage()) {
+      <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
+      <a class="fe-btn fe-btn-secondary" routerLink="/restaurants">Retour aux restaurants</a>
+    } @else if (restaurant(); as restaurant) {
+      <section class="restaurant-details-hero">
+        <img [src]="restaurant.imageUrl || 'https://placehold.co/900x500/e8d7b9/6b4430?text=FoodExpress'" [alt]="restaurant.nom" />
+        <div class="restaurant-details-info">
+          <span class="fe-badge fe-badge-warm">{{ restaurant.cuisineType }}</span>
+          <h1>{{ restaurant.nom }}</h1>
+          <p>{{ restaurant.description }}</p>
+          <span class="restaurant-status" [class.is-open]="restaurant.isOpen">{{ restaurant.isOpen ? 'Ouvert' : 'Fermé' }}</span>
+        </div>
+      </section>
+
+      <section class="restaurant-details-grid" aria-label="Informations du restaurant">
+        <article>
+          <h2>Adresse</h2>
+          <p>{{ restaurant.adresse }}</p>
+        </article>
+        <article>
+          <h2>Horaires</h2>
+          <p>{{ restaurant.horaires }}</p>
+        </article>
+        <article>
+          <h2>Livraison</h2>
+          <p>{{ restaurant.deliveryFee | number:'1.2-2' }} DT</p>
+        </article>
+      </section>
+    } @else {
+      <p class="fe-muted" role="status">Chargement du restaurant…</p>
+    }
+
+    <a class="fe-btn fe-btn-secondary" routerLink="/restaurants">Retour aux restaurants</a>
+  </main>
+</app-shell>
