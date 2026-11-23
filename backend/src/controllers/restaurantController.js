@@ -433,3 +433,7 @@ exports.updateRestaurantStatus = async (req, res) => {
         return res.status(500).json({ message: 'Impossible de modifier le statut du restaurant' });
     }
 };
+
+// Reutilise la meme validation pour l'inscription des restaurateurs.
+exports.validateRestaurantInput = validateRestaurantInput;
+exports.escapeRegex = escapeRegex;

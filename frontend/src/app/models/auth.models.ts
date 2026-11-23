@@ -11,6 +11,13 @@ export interface User {
   isActive: boolean;
 }
 
+export interface RestaurantRegistrationDetails {
+  nom: string;
+  description: string;
+  adresse: string;
+  cuisineType: string;
+}
+
 export interface RegisterRequest {
   nom: string;
   prenom: string;
@@ -18,6 +25,8 @@ export interface RegisterRequest {
   telephone: string;
   password: string;
   confirmPassword: string;
+  role?: Exclude<UserRole, 'admin'>;
+  restaurant?: RestaurantRegistrationDetails;
 }
 
 export interface LoginRequest {

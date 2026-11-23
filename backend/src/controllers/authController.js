@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Restaurant = require('../models/Restaurant');
 const safeUser = require('../utils/safeUser');
 const isStrongPassword = require('../utils/passwordValidation');
+const { escapeRegex, validateRestaurantInput } = require('./restaurantController');
 
 const isValidTelephone = (telephone) => {
     if (typeof telephone !== 'string' || !/^\+?[0-9\s().-]+$/.test(telephone)) {
@@ -14,14 +16,43 @@ const isValidTelephone = (telephone) => {
 exports.register = async (req, res) => {
     try {
         const { nom, prenom, email, telephone, password, confirmPassword } = req.body;
+        const requestedRole = req.body.role === undefined ? 'client' : req.body.role;
 
-        if (!nom || !prenom || !email || !telephone || !password || !confirmPassword) {
+        // L'inscription publique ne peut jamais attribuer le role administrateur.
+        if (requestedRole === 'admin') {
+            return res.status(403).json({ message: 'Le rôle administrateur ne peut pas être attribué lors de l’inscription' });
+        }
+        if (!['client', 'restaurateur'].includes(requestedRole)) {
+            return res.status(400).json({ message: 'Rôle d’inscription invalide' });
+        }
+
+        // Valide les informations restaurant avec les memes regles que l'API restaurants.
+        let restaurantValidation;
+        if (requestedRole === 'restaurateur') {
+            const restaurant = req.body.restaurant;
+            if (!restaurant || typeof restaurant !== 'object' || Array.isArray(restaurant)) {
+                return res.status(400).json({ message: 'Les informations du restaurant sont requises' });
+            }
+            restaurantValidation = validateRestaurantInput({
+                nom: restaurant.nom,
+                description: restaurant.description,
+                adresse: restaurant.adresse,
+                cuisineType: restaurant.cuisineType,
+                deliveryFee: 0
+            }, true);
+            if (restaurantValidation.error) {
+                return res.status(400).json({ message: restaurantValidation.error });
+            }
+        }
+
+        if ([nom, prenom, email, telephone, password, confirmPassword].some((value) => !value) ||
+            [nom, prenom, telephone].some((value) => typeof value !== 'string' || !value.trim())) {
             return res.status(400).json({ message: 'Tous les champs sont requis' });
         }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             return res.status(400).json({ message: 'Format email invalide' });
         }
-        if (!isStrongPassword(password)) {
+        if (typeof password !== 'string' || !isStrongPassword(password)) {
             return res.status(400).json({
                 message: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre'
             });
@@ -36,20 +67,57 @@ exports.register = async (req, res) => {
             return res.status(409).json({ message: 'Cet email est déjà utilisé' });
         }
 
-        const user = await User.create({
-            nom: nom.trim(),
-            prenom: prenom.trim(),
-            email: normalizedEmail,
-            telephone: telephone.trim(),
-            password,
-            role: 'client',
-            isActive: true
-        });
+        if (requestedRole === 'restaurateur') {
+            // Empeche deux comptes de declarer le meme restaurant (nom + adresse).
+            const existingRestaurant = await Restaurant.findOne({
+                nom: { $regex: `^${escapeRegex(restaurantValidation.updates.nom)}$`, $options: 'i' },
+                adresse: { $regex: `^${escapeRegex(restaurantValidation.updates.adresse)}$`, $options: 'i' }
+            });
+            if (existingRestaurant) {
+                return res.status(409).json({ message: 'Ce restaurant est déjà enregistré' });
+            }
+        }
 
-        return res.status(201).json({
-            message: 'Registration successful',
-            user: safeUser(user)
-        });
+        let createdUser;
+        let creatingRestaurant = false;
+        try {
+            createdUser = await User.create({
+                nom: nom.trim(),
+                prenom: prenom.trim(),
+                email: normalizedEmail,
+                telephone: telephone.trim(),
+                password,
+                role: requestedRole,
+                isActive: true
+            });
+
+            let createdRestaurant;
+            if (requestedRole === 'restaurateur') {
+                creatingRestaurant = true;
+                createdRestaurant = await Restaurant.create({
+                    ...restaurantValidation.updates,
+                    owner: createdUser._id,
+                    status: 'pending'
+                });
+            }
+
+            return res.status(201).json({
+                message: requestedRole === 'restaurateur'
+                    ? 'Compte restaurateur et restaurant créés avec succès; en attente de validation'
+                    : 'Registration successful',
+                user: safeUser(createdUser),
+                ...(createdRestaurant ? { restaurant: createdRestaurant } : {})
+            });
+        } catch (createError) {
+            // Sans transaction MongoDB, supprime le compte cree si la creation du restaurant echoue.
+            if (createdUser) {
+                await User.deleteOne({ _id: createdUser._id });
+            }
+            if (creatingRestaurant && createError && createError.code === 11000) {
+                return res.status(409).json({ message: 'Ce restaurant est déjà enregistré' });
+            }
+            throw createError;
+        }
     } catch (error) {
         if (error && error.code === 11000) {
             return res.status(409).json({ message: 'Cet email est déjà utilisé' });

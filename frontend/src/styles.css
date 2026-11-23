@@ -872,6 +872,43 @@ a {
 .fe-auth-footnote a,
 .fe-recovery-contact a { color: var(--fe-secondary); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
 .fe-recovery-contact { margin: 0; color: var(--fe-secondary); font-size: var(--fe-body-sm-size); font-weight: 600; }
+.fe-register-options { display: flex; flex-direction: column; gap: var(--fe-space-sm); }
+.fe-register-options-title {
+  margin: 0;
+  color: var(--fe-on-surface-variant);
+  font-family: var(--fe-font-display);
+  font-size: var(--fe-body-md-size);
+  font-weight: 600;
+  text-align: center;
+}
+.fe-register-option-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--fe-space-sm); }
+.fe-register-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 72px;
+  padding: 12px;
+  border: 1px solid var(--fe-hairline);
+  border-radius: var(--fe-radius-md);
+  background: var(--fe-surface-container-lowest);
+  color: var(--fe-ink);
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.fe-register-option:hover {
+  border-color: var(--fe-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--fe-shadow-card);
+}
+.fe-register-option > .material-symbols-outlined:first-child { color: var(--fe-primary); font-size: 24px; }
+.fe-register-option-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.fe-register-option-copy strong { font-family: var(--fe-font-display); font-size: var(--fe-label-lg-size); }
+.fe-register-option-copy small { color: var(--fe-on-surface-variant); font-size: var(--fe-body-sm-size); line-height: 1.35; }
+.fe-register-option-arrow { margin-left: auto; color: var(--fe-secondary); font-size: 20px; }
+@media (max-width: 480px) {
+  .fe-register-option-grid { grid-template-columns: 1fr; }
+  .fe-register-option { min-height: 64px; }
+}
 
 .fe-auth-showcase {
   position: relative;

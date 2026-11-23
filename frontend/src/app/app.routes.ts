@@ -3,7 +3,7 @@ import { authGuard, guestGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: 'home',
     loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent)

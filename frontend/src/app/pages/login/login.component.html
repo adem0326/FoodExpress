@@ -4,7 +4,7 @@
       <span class="fe-brand-mark" aria-hidden="true">FE</span>
       <span class="fe-brand-name">FoodExpress</span>
     </a>
-    <a class="fe-text-link" routerLink="/register">Créer un compte</a>
+    <a class="fe-text-link" routerLink="/register">S'inscrire</a>
   </header>
 
   <main class="fe-auth-page">
@@ -66,7 +66,27 @@
 
           <div class="fe-auth-divider">ou</div>
 
-          <p class="fe-auth-footnote">Nouveau sur FoodExpress ? <a routerLink="/register">Créer un compte</a></p>
+          <div class="fe-register-options" aria-labelledby="register-options-title">
+            <p id="register-options-title" class="fe-register-options-title">Nouveau sur FoodExpress ? Choisissez votre espace</p>
+            <div class="fe-register-option-grid">
+              <a class="fe-register-option" routerLink="/register">
+                <span class="material-symbols-outlined" aria-hidden="true">person_add</span>
+                <span class="fe-register-option-copy">
+                  <strong>Compte client</strong>
+                  <small>Commandez vos plats préférés</small>
+                </span>
+                <span class="material-symbols-outlined fe-register-option-arrow" aria-hidden="true">arrow_forward</span>
+              </a>
+              <a class="fe-register-option" routerLink="/register" [queryParams]="{ role: 'restaurateur' }">
+                <span class="material-symbols-outlined" aria-hidden="true">restaurant</span>
+                <span class="fe-register-option-copy">
+                  <strong>Compte restaurant</strong>
+                  <small>Publiez votre établissement et votre menu</small>
+                </span>
+                <span class="material-symbols-outlined fe-register-option-arrow" aria-hidden="true">arrow_forward</span>
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 

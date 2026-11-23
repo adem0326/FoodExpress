@@ -6,8 +6,21 @@
   </section>
 
   <section class="auth-card" aria-labelledby="register-title">
-    <h2 id="register-title">Créer votre compte</h2>
-    <p class="subtitle">Rejoignez la communauté FoodExpress</p>
+    <span class="fe-badge fe-badge-warm">
+      <span class="material-symbols-outlined" aria-hidden="true" style="font-size: 15px;">
+        {{ isRestaurantRegistration ? 'restaurant' : 'person_add' }}
+      </span>
+      {{ isRestaurantRegistration ? 'Espace restaurateur' : 'Espace client' }}
+    </span>
+
+    <h2 id="register-title" style="margin-top: 16px;">
+      {{ isRestaurantRegistration ? 'Créer un compte restaurateur' : 'Créer votre compte' }}
+    </h2>
+    <p class="subtitle">
+      {{ isRestaurantRegistration
+          ? 'Enregistrez votre restaurant et gérez votre menu sur FoodExpress.'
+          : 'Rejoignez la communauté FoodExpress' }}
+    </p>
 
     @if (successMessage()) { <div class="alert success" role="status">{{ successMessage() }}</div> }
     @if (errorMessage()) { <div class="alert error" role="alert">{{ errorMessage() }}</div> }
@@ -56,8 +69,50 @@
         @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.hasError('required')) { <small>Confirmez le mot de passe.</small> }
         @if (form.controls.confirmPassword.touched && form.hasError('passwordsMatch')) { <small>Les mots de passe ne correspondent pas.</small> }
       </div>
-      <button class="primary-button" type="submit" [disabled]="isSubmitting()">{{ isSubmitting() ? 'Création...' : 'Créer mon compte' }}</button>
+
+      @if (isRestaurantRegistration) {
+        <fieldset class="restaurant-section">
+          <legend>Informations du restaurant</legend>
+
+          <div class="field">
+            <label for="restaurantNom">Nom du restaurant</label>
+            <input id="restaurantNom" type="text" formControlName="restaurantNom" placeholder="Le nom affiché aux clients" />
+            @if (form.controls.restaurantNom.touched && form.controls.restaurantNom.hasError('required')) { <small>Le nom du restaurant est requis.</small> }
+            @if (form.controls.restaurantNom.touched && form.controls.restaurantNom.hasError('minlength')) { <small>Au moins 2 caractères.</small> }
+          </div>
+
+          <div class="field">
+            <label for="restaurantDescription">Description</label>
+            <textarea id="restaurantDescription" formControlName="restaurantDescription" rows="4" placeholder="Présentez votre cuisine et votre établissement"></textarea>
+            @if (form.controls.restaurantDescription.touched && form.controls.restaurantDescription.hasError('required')) { <small>La description est requise.</small> }
+          </div>
+
+          <div class="field">
+            <label for="restaurantAdresse">Adresse</label>
+            <input id="restaurantAdresse" type="text" formControlName="restaurantAdresse" autocomplete="street-address" placeholder="Adresse complète" />
+            @if (form.controls.restaurantAdresse.touched && form.controls.restaurantAdresse.hasError('required')) { <small>L'adresse est requise.</small> }
+          </div>
+
+          <div class="field">
+            <label for="cuisineType">Type de cuisine</label>
+            <input id="cuisineType" type="text" formControlName="cuisineType" placeholder="Ex. Cuisine tunisienne, italienne, végétarienne" />
+            @if (form.controls.cuisineType.touched && form.controls.cuisineType.hasError('required')) { <small>Le type de cuisine est requis.</small> }
+          </div>
+        </fieldset>
+      }
+
+      <button class="primary-button" type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting()
+            ? 'Création...'
+            : (isRestaurantRegistration ? 'Créer mon compte restaurateur' : 'Créer mon compte') }}
+      </button>
     </form>
+
+    @if (isRestaurantRegistration) {
+      <p class="auth-link">Vous êtes client ? <a routerLink="/register">Créer un compte client</a></p>
+    } @else {
+      <p class="auth-link">Vous avez un restaurant ? <a routerLink="/register" [queryParams]="{ role: 'restaurateur' }">Register your restaurant</a></p>
+    }
     <p class="auth-link">Déjà inscrit ? <a routerLink="/login">Se connecter</a></p>
   </section>
 </main>
