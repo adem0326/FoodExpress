@@ -97,6 +97,9 @@
                     <div class="manage-actions">
                       <button type="button" class="fe-btn fe-btn-secondary" (click)="editRestaurant(restaurant)">Modifier</button>
                       <button type="button" class="fe-btn fe-btn-secondary is-danger" (click)="deleteRestaurant(restaurant)">Supprimer</button>
+                      @if (auth.getCurrentUser()?.role === 'restaurateur') {
+                        <a class="fe-btn fe-btn-secondary" [routerLink]="['/restaurateur/restaurants', restaurant._id, 'menu']">Gérer le menu</a>
+                      }
                       @if (auth.getCurrentUser()?.role === 'admin') {
                         @if (restaurant.status !== 'approved') {
                           <button type="button" class="fe-btn fe-btn-primary" (click)="changeStatus(restaurant, 'approved')">Valider</button>

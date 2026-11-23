@@ -322,7 +322,7 @@ The following modules are part of the overall project scope. Their implementatio
 
 - [ ] Restaurant management.
 - [ ] Restaurant categories.
-- [ ] Meal and menu management.
+- [x] Meal and menu management.
 - [ ] Shopping cart.
 - [ ] Order placement.
 - [ ] Order management.
@@ -368,6 +368,20 @@ All these endpoints require authentication and administrator authorization.
 | PUT | `/:id` | Update user information |
 | PATCH | `/:id/status` | Activate or deactivate a user |
 | DELETE | `/:id` | Delete a user |
+
+### Restaurant Menu Routes
+
+Base URL: `http://localhost:5000/api/restaurants/:restaurantId/dishes`
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/` | List dishes for an approved restaurant, including availability | Public |
+| GET | `/manage` | List dishes for a restaurant owned by the connected restaurateur | Restaurateur (owner) |
+| POST | `/` | Add a dish to an owned restaurant | Restaurateur (owner) |
+| PUT | `/:dishId` | Update a dish belonging to an owned restaurant | Restaurateur (owner) |
+| DELETE | `/:dishId` | Delete a dish belonging to an owned restaurant | Restaurateur (owner) |
+
+Each dish stores its name, image URL, description, price in DT, category, availability, and restaurant. Categories are Entrées, Plats principaux, Pizzas, Sandwichs, Desserts, and Boissons.
 
 ### Authentication Header
 

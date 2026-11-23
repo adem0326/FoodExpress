@@ -29,6 +29,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/manage-restaurants/manage-restaurants.component').then((m) => m.ManageRestaurantsComponent)
   },
   {
+    path: 'restaurateur/restaurants/:id/menu',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['restaurateur'] },
+    loadComponent: () => import('./pages/manage-dishes/manage-dishes.component').then((m) => m.ManageDishesComponent)
+  },
+  {
     path: 'register',
     loadComponent: () => import('./pages/register/register.component').then((m) => m.RegisterComponent)
   },

@@ -16,6 +16,7 @@ app.use(express.json());
 
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/restaurants/:restaurantId/dishes', require('./routes/dishRoutes'));
 app.use('/api/restaurants', require('./routes/restaurantRoutes'));
 
 app.get('/', (req, res) => {

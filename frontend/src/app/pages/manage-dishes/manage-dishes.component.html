@@ -1,0 +1,98 @@
+<app-shell>
+  <main class="fe-page manage-dishes-page">
+    <header class="manage-dishes-header">
+      <div>
+        <span class="fe-badge fe-badge-warm">Gestion des menus</span>
+        <h1>{{ restaurant()?.nom || 'Menu du restaurant' }}</h1>
+      </div>
+      <a class="fe-btn fe-btn-secondary" routerLink="/restaurateur/restaurants">Retour aux restaurants</a>
+    </header>
+
+    @if (successMessage()) {
+      <p class="fe-alert fe-alert-success" role="status">{{ successMessage() }}</p>
+    }
+    @if (errorMessage()) {
+      <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    <section class="manage-dishes-card" aria-labelledby="dish-form-title">
+      <h2 id="dish-form-title">{{ editingId() ? 'Modifier le plat' : 'Ajouter un plat' }}</h2>
+      <form [formGroup]="dishForm" (ngSubmit)="submitDish()" novalidate>
+        <label>
+          <span>Nom du plat</span>
+          <input type="text" formControlName="nom" />
+        </label>
+        <label>
+          <span>Catégorie</span>
+          <select formControlName="categorie">
+            @for (category of categories; track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          <span>Prix (DT)</span>
+          <input type="number" min="0" max="100000" step="0.1" formControlName="prix" />
+        </label>
+        <label>
+          <span>URL de l’image</span>
+          <input type="url" formControlName="imageUrl" />
+        </label>
+        <label class="dish-field-wide">
+          <span>Description</span>
+          <textarea formControlName="description" rows="3"></textarea>
+        </label>
+        <label class="dish-field-checkbox">
+          <input type="checkbox" formControlName="disponible" />
+          <span>Plat disponible</span>
+        </label>
+        <div class="dish-form-actions dish-field-wide">
+          <button type="submit" class="fe-btn fe-btn-primary" [disabled]="isSaving()">
+            {{ isSaving() ? 'Enregistrement…' : editingId() ? 'Enregistrer' : 'Ajouter le plat' }}
+          </button>
+          @if (editingId()) {
+            <button type="button" class="fe-btn fe-btn-secondary" (click)="cancelEdit()">Annuler</button>
+          }
+        </div>
+      </form>
+    </section>
+
+    <section class="manage-dishes-card" aria-label="Plats du restaurant">
+      @if (isLoading()) {
+        <p class="fe-muted" role="status">Chargement du menu…</p>
+      } @else if (dishes().length) {
+        <div class="dish-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Plat</th>
+                <th>Catégorie</th>
+                <th>Prix</th>
+                <th>Disponibilité</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (dish of dishes(); track dish._id) {
+                <tr>
+                  <td>{{ dish.nom }}</td>
+                  <td>{{ dish.categorie }}</td>
+                  <td>{{ dish.prix }} DT</td>
+                  <td>{{ dish.disponible ? 'Disponible' : 'Indisponible' }}</td>
+                  <td>
+                    <div class="dish-actions">
+                      <button type="button" class="fe-btn fe-btn-secondary" (click)="editDish(dish)">Modifier</button>
+                      <button type="button" class="fe-btn fe-btn-secondary dish-delete" (click)="deleteDish(dish)">Supprimer</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="fe-muted">Aucun plat dans le menu. Ajoutez votre premier plat ci-dessus.</p>
+      }
+    </section>
+  </main>
+</app-shell>

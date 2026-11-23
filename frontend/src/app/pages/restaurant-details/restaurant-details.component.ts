@@ -8,6 +8,8 @@ import { DecimalPipe } from '@angular/common';
 import { RestaurantsService } from '../../services/restaurants.service';
 // Charge le type Restaurant.
 import { Restaurant } from '../../models/restaurant.models';
+import { Dish, DISH_CATEGORIES } from '../../models/dish.models';
+import { DishesService } from '../../services/dishes.service';
 // Charge la structure commune.
 import { AppShellComponent } from '../../shared/app-shell.component';
 
@@ -24,8 +26,13 @@ export class RestaurantDetailsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   // Injecte le service restaurant.
   private readonly restaurantsService = inject(RestaurantsService);
+  private readonly dishesService = inject(DishesService);
   // Stocke le restaurant charge.
   readonly restaurant = signal<Restaurant | null>(null);
+  readonly dishes = signal<Dish[]>([]);
+  readonly dishCategories = DISH_CATEGORIES;
+  readonly isMenuLoading = signal(false);
+  readonly menuErrorMessage = signal('');
   // Stocke une erreur eventuelle.
   readonly errorMessage = signal('');
 
@@ -41,9 +48,26 @@ export class RestaurantDetailsComponent implements OnInit {
     // Charge le restaurant depuis l'API.
     this.restaurantsService.getById(id).subscribe({
       // Enregistre le restaurant charge.
-      next: ({ restaurant }) => this.restaurant.set(restaurant),
+      next: ({ restaurant }) => {
+        this.restaurant.set(restaurant);
+        this.isMenuLoading.set(true);
+        this.dishesService.listForRestaurant(restaurant._id).subscribe({
+          next: ({ dishes }) => {
+            this.dishes.set(dishes);
+            this.isMenuLoading.set(false);
+          },
+          error: () => {
+            this.menuErrorMessage.set('Impossible de charger le menu');
+            this.isMenuLoading.set(false);
+          }
+        });
+      },
       // Affiche une erreur lisible.
       error: () => this.errorMessage.set('Impossible de charger ce restaurant')
     });
+  }
+
+  dishesForCategory(category: string): Dish[] {
+    return this.dishes().filter((dish) => dish.categorie === category);
   }
 }

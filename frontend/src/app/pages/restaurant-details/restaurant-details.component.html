@@ -28,6 +28,46 @@
           <p>{{ restaurant.deliveryFee | number:'1.2-2' }} DT</p>
         </article>
       </section>
+
+      <section class="restaurant-menu" aria-labelledby="restaurant-menu-title">
+        <header>
+          <span class="fe-badge fe-badge-warm">À la carte</span>
+          <h2 id="restaurant-menu-title">Notre menu</h2>
+        </header>
+        @if (menuErrorMessage()) {
+          <p class="fe-alert fe-alert-error" role="alert">{{ menuErrorMessage() }}</p>
+        } @else if (isMenuLoading()) {
+          <p class="fe-muted" role="status">Chargement du menu…</p>
+        } @else if (dishes().length) {
+          @for (category of dishCategories; track category) {
+            @let categoryDishes = dishesForCategory(category);
+            @if (categoryDishes.length) {
+              <section class="restaurant-menu-category" [attr.aria-label]="category">
+                <h3>{{ category }}</h3>
+                <div class="restaurant-menu-list">
+                  @for (dish of categoryDishes; track dish._id) {
+                    <article class="restaurant-menu-item" [class.is-unavailable]="!dish.disponible">
+                      <img [src]="dish.imageUrl || 'https://placehold.co/240x180/e8d7b9/6b4430?text=FoodExpress'" [alt]="dish.nom" />
+                      <div class="restaurant-menu-item-info">
+                        <div class="restaurant-menu-item-heading">
+                          <h4>{{ dish.nom }}</h4>
+                          <strong>{{ dish.prix | number:'1.2-2' }} DT</strong>
+                        </div>
+                        <p>{{ dish.description }}</p>
+                        <span class="dish-availability" [class.is-available]="dish.disponible">
+                          {{ dish.disponible ? 'Disponible' : 'Indisponible' }}
+                        </span>
+                      </div>
+                    </article>
+                  }
+                </div>
+              </section>
+            }
+          }
+        } @else {
+          <p class="fe-muted">Le menu de ce restaurant n’est pas encore disponible.</p>
+        }
+      </section>
     } @else {
       <p class="fe-muted" role="status">Chargement du restaurant…</p>
     }
