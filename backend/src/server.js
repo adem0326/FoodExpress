@@ -18,10 +18,8 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/restaurants/:restaurantId/dishes', require('./routes/dishRoutes'));
 app.use('/api/restaurants', require('./routes/restaurantRoutes'));
-<<<<<<< HEAD
 app.use('/api/orders', require('./routes/orderRoutes'));
-=======
->>>>>>> 146671c706d033a2e2e8c76bf5828665fe3f4a98
+app.use('/api/stats', require('./routes/statsRoutes'));
 
 app.get('/', (req, res) => {
     res.json({ message: 'FoodExpress API is running!' });

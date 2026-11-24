@@ -39,9 +39,16 @@ export interface OrderRestaurant {
   adresse?: string;
 }
 
+export interface OrderClient {
+  _id: string;
+  nom: string;
+  prenom: string;
+  telephone?: string;
+}
+
 export interface Order {
   _id: string;
-  client: string;
+  client: OrderClient | string;
   restaurant: OrderRestaurant | string;
   articles: OrderItem[];
   adresseLivraison: string;
@@ -77,4 +84,52 @@ export interface CartRestaurant {
   id: string;
   nom: string;
   deliveryFee: number;
+}
+
+// --- Etudiant 5 : traitement des commandes et statistiques ---
+
+// Actions possibles pour le restaurateur selon le statut actuel (miroir du cycle de vie du serveur).
+export interface StatusAction {
+  statut: OrderStatus;
+  label: string;
+  danger?: boolean;
+}
+
+export const ORDER_STATUS_ACTIONS: Record<OrderStatus, StatusAction[]> = {
+  en_attente: [
+    { statut: 'acceptee', label: 'Accepter' },
+    { statut: 'annulee', label: 'Refuser', danger: true }
+  ],
+  acceptee: [
+    { statut: 'en_preparation', label: 'Passer en préparation' },
+    { statut: 'annulee', label: 'Annuler', danger: true }
+  ],
+  en_preparation: [
+    { statut: 'en_livraison', label: 'Passer en livraison' },
+    { statut: 'annulee', label: 'Annuler', danger: true }
+  ],
+  en_livraison: [{ statut: 'livree', label: 'Marquer comme livrée' }],
+  livree: [],
+  annulee: []
+};
+
+export interface RestaurantOrdersResponse {
+  orders: Order[];
+  pagination: { page: number; limit: number; total: number; pages: number };
+}
+
+export interface RestaurateurStats {
+  totalOrders: number;
+  pendingOrders: number;
+  acceptedOrders: number;
+  byStatus: Partial<Record<OrderStatus, number>>;
+  revenue: number;
+  topDishes: { plat: string; nom: string; quantite: number }[];
+}
+
+export interface AdminStats {
+  clients: number;
+  restaurants: number;
+  orders: number;
+  revenue: number;
 }

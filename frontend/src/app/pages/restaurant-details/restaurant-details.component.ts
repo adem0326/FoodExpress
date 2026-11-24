@@ -10,10 +10,7 @@ import { RestaurantsService } from '../../services/restaurants.service';
 import { Restaurant } from '../../models/restaurant.models';
 import { Dish, DISH_CATEGORIES } from '../../models/dish.models';
 import { DishesService } from '../../services/dishes.service';
-<<<<<<< HEAD
 import { CartService } from '../../services/cart.service';
-=======
->>>>>>> 146671c706d033a2e2e8c76bf5828665fe3f4a98
 // Charge la structure commune.
 import { AppShellComponent } from '../../shared/app-shell.component';
 
@@ -31,20 +28,14 @@ export class RestaurantDetailsComponent implements OnInit {
   // Injecte le service restaurant.
   private readonly restaurantsService = inject(RestaurantsService);
   private readonly dishesService = inject(DishesService);
-<<<<<<< HEAD
   readonly cart = inject(CartService);
-=======
->>>>>>> 146671c706d033a2e2e8c76bf5828665fe3f4a98
   // Stocke le restaurant charge.
   readonly restaurant = signal<Restaurant | null>(null);
   readonly dishes = signal<Dish[]>([]);
   readonly dishCategories = DISH_CATEGORIES;
   readonly isMenuLoading = signal(false);
   readonly menuErrorMessage = signal('');
-<<<<<<< HEAD
   readonly cartMessage = signal('');
-=======
->>>>>>> 146671c706d033a2e2e8c76bf5828665fe3f4a98
   // Stocke une erreur eventuelle.
   readonly errorMessage = signal('');
 
@@ -82,8 +73,6 @@ export class RestaurantDetailsComponent implements OnInit {
   dishesForCategory(category: string): Dish[] {
     return this.dishes().filter((dish) => dish.categorie === category);
   }
-<<<<<<< HEAD
-
   addToCart(dish: Dish): void {
     const restaurant = this.restaurant();
     if (!restaurant) return;
@@ -107,6 +96,4 @@ export class RestaurantDetailsComponent implements OnInit {
         : `${dish.nom} a été ajouté au panier.`
     );
   }
-=======
->>>>>>> 146671c706d033a2e2e8c76bf5828665fe3f4a98
 }

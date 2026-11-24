@@ -120,6 +120,17 @@ import { AppShellComponent } from '../../shared/app-shell.component';
                   </div>
                   <span class="fe-action-card-footer">Ouvrir la gestion</span>
                 </a>
+                <a class="fe-action-card" routerLink="/admin/statistics">
+                  <div class="fe-action-card-top">
+                    <span class="fe-icon-tile"><span class="material-symbols-outlined" aria-hidden="true">bar_chart</span></span>
+                    <span class="material-symbols-outlined fe-action-arrow" aria-hidden="true">arrow_forward</span>
+                  </div>
+                  <div>
+                    <h3>Statistiques</h3>
+                    <p>Clients, restaurants, commandes et chiffre d'affaires</p>
+                  </div>
+                  <span class="fe-action-card-footer">Voir les statistiques</span>
+                </a>
               </nav>
             </section>
           }
@@ -143,6 +154,28 @@ import { AppShellComponent } from '../../shared/app-shell.component';
                     <p>Ajouter, modifier ou supprimer vos établissements</p>
                   </div>
                   <span class="fe-action-card-footer">Ouvrir la gestion</span>
+                </a>
+                <a class="fe-action-card" routerLink="/restaurateur/dashboard">
+                  <div class="fe-action-card-top">
+                    <span class="fe-icon-tile"><span class="material-symbols-outlined" aria-hidden="true">monitoring</span></span>
+                    <span class="material-symbols-outlined fe-action-arrow" aria-hidden="true">arrow_forward</span>
+                  </div>
+                  <div>
+                    <h3>Tableau de bord</h3>
+                    <p>Statistiques et plats les plus commandés</p>
+                  </div>
+                  <span class="fe-action-card-footer">Voir les indicateurs</span>
+                </a>
+                <a class="fe-action-card" routerLink="/restaurateur/orders">
+                  <div class="fe-action-card-top">
+                    <span class="fe-icon-tile"><span class="material-symbols-outlined" aria-hidden="true">receipt_long</span></span>
+                    <span class="material-symbols-outlined fe-action-arrow" aria-hidden="true">arrow_forward</span>
+                  </div>
+                  <div>
+                    <h3>Commandes reçues</h3>
+                    <p>Accepter, refuser et suivre les commandes</p>
+                  </div>
+                  <span class="fe-action-card-footer">Traiter les commandes</span>
                 </a>
               </nav>
             </section>
