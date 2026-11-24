@@ -17,6 +17,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/restaurant-details/restaurant-details.component').then((m) => m.RestaurantDetailsComponent)
   },
   {
+<<<<<<< HEAD
     path: 'cart',
     loadComponent: () => import('./pages/cart/cart.component').then((m) => m.CartComponent)
   },
@@ -39,6 +40,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/my-orders/my-orders.component').then((m) => m.MyOrdersComponent)
   },
   {
+=======
+>>>>>>> 146671c706d033a2e2e8c76bf5828665fe3f4a98
     path: 'admin/restaurants',
     canActivate: [authGuard, roleGuard],
     data: { roles: ['admin'] },

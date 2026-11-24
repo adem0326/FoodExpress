@@ -34,9 +34,12 @@
           <span class="fe-badge fe-badge-warm">À la carte</span>
           <h2 id="restaurant-menu-title">Notre menu</h2>
         </header>
+<<<<<<< HEAD
         @if (cartMessage()) {
           <p class="fe-alert" role="status">{{ cartMessage() }}</p>
         }
+=======
+>>>>>>> 146671c706d033a2e2e8c76bf5828665fe3f4a98
         @if (menuErrorMessage()) {
           <p class="fe-alert fe-alert-error" role="alert">{{ menuErrorMessage() }}</p>
         } @else if (isMenuLoading()) {
@@ -60,6 +63,7 @@
                         <span class="dish-availability" [class.is-available]="dish.disponible">
                           {{ dish.disponible ? 'Disponible' : 'Indisponible' }}
                         </span>
+<<<<<<< HEAD
                         <button
                           type="button"
                           class="fe-btn fe-btn-primary"
@@ -67,6 +71,8 @@
                           (click)="addToCart(dish)">
                           Ajouter au panier
                         </button>
+=======
+>>>>>>> 146671c706d033a2e2e8c76bf5828665fe3f4a98
                       </div>
                     </article>
                   }

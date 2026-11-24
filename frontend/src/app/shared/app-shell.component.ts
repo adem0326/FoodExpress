@@ -1,7 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+<<<<<<< HEAD
 import { CartService } from '../services/cart.service';
+=======
+>>>>>>> 146671c706d033a2e2e8c76bf5828665fe3f4a98
 
 @Component({
   selector: 'app-shell',
@@ -18,12 +21,15 @@ import { CartService } from '../services/cart.service';
           <nav class="fe-header-nav" aria-label="Navigation principale">
             <a routerLink="/home" routerLinkActive="is-active">Accueil</a>
             <a routerLink="/restaurants" routerLinkActive="is-active">Restaurants</a>
+<<<<<<< HEAD
             @if (auth.currentUser(); as user) {
               @if (user.role === 'client') {
                 <a routerLink="/cart" routerLinkActive="is-active">Panier ({{ cart.count() }})</a>
                 <a routerLink="/my-orders" routerLinkActive="is-active">Mes commandes</a>
               }
             }
+=======
+>>>>>>> 146671c706d033a2e2e8c76bf5828665fe3f4a98
           </nav>
 
           @if (auth.currentUser(); as user) {
@@ -105,7 +111,10 @@ import { CartService } from '../services/cart.service';
 })
 export class AppShellComponent {
   readonly auth = inject(AuthService);
+<<<<<<< HEAD
   readonly cart = inject(CartService);
+=======
+>>>>>>> 146671c706d033a2e2e8c76bf5828665fe3f4a98
 
   homeRoute(): string {
     return this.auth.getHomeRoute();
