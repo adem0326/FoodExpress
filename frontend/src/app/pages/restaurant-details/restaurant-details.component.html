@@ -1,0 +1,87 @@
+<app-shell>
+  <main class="fe-page restaurant-details-page">
+    @if (errorMessage()) {
+      <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
+      <a class="fe-btn fe-btn-secondary" routerLink="/restaurants">Retour aux restaurants</a>
+    } @else if (restaurant(); as restaurant) {
+      <section class="restaurant-details-hero">
+        <img [src]="restaurant.imageUrl || 'https://placehold.co/900x500/e8d7b9/6b4430?text=FoodExpress'" [alt]="restaurant.nom" />
+        <div class="restaurant-details-info">
+          <span class="fe-badge fe-badge-warm">{{ restaurant.cuisineType }}</span>
+          <h1>{{ restaurant.nom }}</h1>
+          <p>{{ restaurant.description }}</p>
+          <span class="restaurant-status" [class.is-open]="restaurant.isOpen">{{ restaurant.isOpen ? 'Ouvert' : 'Fermé' }}</span>
+        </div>
+      </section>
+
+      <section class="restaurant-details-grid" aria-label="Informations du restaurant">
+        <article>
+          <h2>Adresse</h2>
+          <p>{{ restaurant.adresse }}</p>
+        </article>
+        <article>
+          <h2>Horaires</h2>
+          <p>{{ restaurant.horaires }}</p>
+        </article>
+        <article>
+          <h2>Livraison</h2>
+          <p>{{ restaurant.deliveryFee | number:'1.2-2' }} DT</p>
+        </article>
+      </section>
+
+      <section class="restaurant-menu" aria-labelledby="restaurant-menu-title">
+        <header>
+          <span class="fe-badge fe-badge-warm">À la carte</span>
+          <h2 id="restaurant-menu-title">Notre menu</h2>
+        </header>
+        @if (cartMessage()) {
+          <p class="fe-alert" role="status">{{ cartMessage() }}</p>
+        }
+        @if (menuErrorMessage()) {
+          <p class="fe-alert fe-alert-error" role="alert">{{ menuErrorMessage() }}</p>
+        } @else if (isMenuLoading()) {
+          <p class="fe-muted" role="status">Chargement du menu…</p>
+        } @else if (dishes().length) {
+          @for (category of dishCategories; track category) {
+            @let categoryDishes = dishesForCategory(category);
+            @if (categoryDishes.length) {
+              <section class="restaurant-menu-category" [attr.aria-label]="category">
+                <h3>{{ category }}</h3>
+                <div class="restaurant-menu-list">
+                  @for (dish of categoryDishes; track dish._id) {
+                    <article class="restaurant-menu-item" [class.is-unavailable]="!dish.disponible">
+                      <img [src]="dish.imageUrl || 'https://placehold.co/240x180/e8d7b9/6b4430?text=FoodExpress'" [alt]="dish.nom" />
+                      <div class="restaurant-menu-item-info">
+                        <div class="restaurant-menu-item-heading">
+                          <h4>{{ dish.nom }}</h4>
+                          <strong>{{ dish.prix | number:'1.2-2' }} DT</strong>
+                        </div>
+                        <p>{{ dish.description }}</p>
+                        <span class="dish-availability" [class.is-available]="dish.disponible">
+                          {{ dish.disponible ? 'Disponible' : 'Indisponible' }}
+                        </span>
+                        <button
+                          type="button"
+                          class="fe-btn fe-btn-primary"
+                          [disabled]="!dish.disponible || !restaurant.isOpen"
+                          (click)="addToCart(dish)">
+                          Ajouter au panier
+                        </button>
+                      </div>
+                    </article>
+                  }
+                </div>
+              </section>
+            }
+          }
+        } @else {
+          <p class="fe-muted">Le menu de ce restaurant n’est pas encore disponible.</p>
+        }
+      </section>
+    } @else {
+      <p class="fe-muted" role="status">Chargement du restaurant…</p>
+    }
+
+    <a class="fe-btn fe-btn-secondary" routerLink="/restaurants">Retour aux restaurants</a>
+  </main>
+</app-shell>

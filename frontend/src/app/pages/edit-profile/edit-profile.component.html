@@ -1,0 +1,105 @@
+<app-shell>
+  <main class="fe-container fe-page">
+    <nav class="fe-breadcrumb" aria-label="Fil d'Ariane">
+      <a [routerLink]="auth.getHomeRoute()">Accueil</a>
+      <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+      <a routerLink="/profile">Mon profil</a>
+      <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+      <span aria-current="page">Modifier</span>
+    </nav>
+
+    <header class="fe-page-header">
+      <div>
+        <span class="fe-eyebrow">Espace membre · FoodExpress</span>
+        <h1 class="fe-headline-lg">Modifier mes informations personnelles</h1>
+        <p class="fe-body-md fe-muted">Mettez à jour vos coordonnées pour assurer le suivi de vos commandes.</p>
+      </div>
+      <nav class="fe-pill-nav" aria-label="Navigation du profil">
+        <a class="fe-pill" routerLink="/profile">
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+          Retour au profil
+        </a>
+        <a class="fe-pill" routerLink="/change-password">
+          <span class="material-symbols-outlined" aria-hidden="true">key</span>
+          Changer le mot de passe
+        </a>
+      </nav>
+    </header>
+
+    @if (isLoading()) {
+      <p class="fe-hint" role="status">Chargement du profil...</p>
+    } @else {
+      @if (errorMessage()) { <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p> }
+
+      <div class="fe-edit-layout">
+        <section class="fe-card fe-edit-form-card" aria-labelledby="edit-profile-title">
+          <div class="fe-card-header fe-card-header--flush">
+            <div class="fe-inline-head">
+              <span class="fe-icon-tile"><span class="material-symbols-outlined" aria-hidden="true">badge</span></span>
+              <div>
+                <h2 id="edit-profile-title" class="fe-headline-sm">Informations personnelles</h2>
+                <span class="fe-label-sm fe-muted">Identité et contact prioritaire</span>
+              </div>
+            </div>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="fe-form">
+            <div class="fe-form-grid">
+              <div class="fe-field">
+                <label for="prenom">Prénom</label>
+                <div class="fe-input-wrap">
+                  <span class="material-symbols-outlined fe-input-icon" aria-hidden="true">person</span>
+                  <input id="prenom" class="fe-input fe-input-with-icon" formControlName="prenom" autocomplete="given-name" />
+                </div>
+                @if (form.controls.prenom.touched && form.controls.prenom.invalid) { <small class="fe-error">Le prénom est requis.</small> }
+              </div>
+
+              <div class="fe-field">
+                <label for="nom">Nom</label>
+                <div class="fe-input-wrap">
+                  <span class="material-symbols-outlined fe-input-icon" aria-hidden="true">signature</span>
+                  <input id="nom" class="fe-input fe-input-with-icon" formControlName="nom" autocomplete="family-name" />
+                </div>
+                @if (form.controls.nom.touched && form.controls.nom.invalid) { <small class="fe-error">Le nom est requis.</small> }
+              </div>
+            </div>
+
+            <div class="fe-field">
+              <label for="telephone">Téléphone</label>
+              <div class="fe-input-wrap">
+                <span class="material-symbols-outlined fe-input-icon" aria-hidden="true">phone</span>
+                <input id="telephone" class="fe-input fe-input-with-icon" type="tel" formControlName="telephone" autocomplete="tel" />
+              </div>
+              @if (form.controls.telephone.touched && form.controls.telephone.hasError('required')) { <small class="fe-error">Le téléphone est requis.</small> }
+              @if (form.controls.telephone.touched && form.controls.telephone.hasError('telephone')) { <small class="fe-error">Entrez un numéro valide de 7 à 15 chiffres.</small> }
+            </div>
+
+            <div class="fe-form-actions">
+              <button class="fe-btn fe-btn-primary" type="submit" [disabled]="isSubmitting()">
+                <span class="material-symbols-outlined" aria-hidden="true">check</span>
+                {{ isSubmitting() ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="fe-side-stack" aria-label="Informations complémentaires">
+          <div class="fe-side-card">
+            <div class="fe-inline-head fe-side-card-head">
+              <span class="material-symbols-outlined fe-accent" aria-hidden="true">verified_user</span>
+              <h3>Coordonnées &amp; confidentialité</h3>
+            </div>
+            <p>Ces informations sont utilisées pour la livraison et le suivi de vos commandes FoodExpress.</p>
+          </div>
+          <div class="fe-side-card">
+            <div class="fe-inline-head fe-side-card-head">
+              <span class="material-symbols-outlined fe-accent" aria-hidden="true">pedal_bike</span>
+              <h3>Contact livreur</h3>
+            </div>
+            <p>Le numéro de téléphone renseigné sert à coordonner la remise de vos repas avec le livreur.</p>
+          </div>
+        </aside>
+      </div>
+    }
+  </main>
+</app-shell>

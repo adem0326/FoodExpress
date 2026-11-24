@@ -1,0 +1,111 @@
+<main class="admin-page">
+  <div class="admin-shell">
+    <header class="admin-header">
+      <div>
+        <p class="admin-eyebrow">FoodExpress · Administration</p>
+        <h1>Gestion des utilisateurs</h1>
+        <p>Recherchez, consultez et gérez les comptes de la plateforme.</p>
+      </div>
+      <a class="admin-secondary-button" routerLink="/admin">Retour au tableau de bord</a>
+    </header>
+
+    @if (flashMessage.message()) {
+      <p class="admin-success" role="status">{{ flashMessage.message() }}</p>
+    }
+    @if (errorMessage()) {
+      <p class="admin-error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    <section class="admin-card" aria-label="Filtres utilisateurs">
+      <div class="admin-filters">
+        <label>
+          <span>Rechercher</span>
+          <input type="search" [formControl]="search" placeholder="Nom, prénom ou e-mail" />
+        </label>
+        <label>
+          <span>Rôle</span>
+          <select [value]="role()" (change)="setRole($event)">
+            <option value="all">Tous les rôles</option>
+            <option value="client">Client</option>
+            <option value="restaurateur">Restaurateur</option>
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+        <label>
+          <span>Statut</span>
+          <select [value]="status()" (change)="setStatus($event)">
+            <option value="all">Tous les statuts</option>
+            <option value="active">Actifs</option>
+            <option value="inactive">Inactifs</option>
+          </select>
+        </label>
+      </div>
+
+      @if (isLoading()) {
+        <p class="admin-message" role="status">Chargement des utilisateurs…</p>
+      } @else if (users().length) {
+        <div class="admin-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>E-mail</th>
+                <th>Téléphone</th>
+                <th>Rôle</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of users(); track user.id) {
+                <tr>
+                  <td>{{ user.prenom }} {{ user.nom }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.telephone }}</td>
+                  <td>{{ user.role }}</td>
+                  <td>
+                    <span class="admin-status" [class.is-active]="user.isActive">
+                      {{ user.isActive ? 'Actif' : 'Inactif' }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="admin-row-actions">
+                      <a class="admin-link-button" [routerLink]="['/admin/users', user.id]">Détails</a>
+                      <a class="admin-link-button" [routerLink]="['/admin/users', user.id, 'edit']">Modifier</a>
+                      <a class="admin-link-button" [routerLink]="['/admin/users', user.id, 'password']">Changer le mot de passe</a>
+                      <button
+                        type="button"
+                        class="admin-action-button"
+                        [disabled]="actionUserId() === user.id || (isCurrentUser(user) && user.isActive)"
+                        (click)="toggleStatus(user)">
+                        {{ user.isActive ? 'Désactiver' : 'Activer' }}
+                      </button>
+                      <button
+                        type="button"
+                        class="admin-action-button is-danger"
+                        [disabled]="actionUserId() === user.id || isCurrentUser(user)"
+                        (click)="deleteUser(user)">
+                        Supprimer
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="admin-message">Aucun utilisateur ne correspond à ces critères.</p>
+      }
+
+      <footer class="admin-pagination">
+        <span>{{ pagination().total }} utilisateur(s)</span>
+        <div>
+          <button type="button" class="admin-secondary-button" [disabled]="isLoading() || pagination().page <= 1" (click)="changePage(pagination().page - 1)">Précédent</button>
+          <span>Page {{ pagination().page }} / {{ pagination().totalPages || 1 }}</span>
+          <button type="button" class="admin-secondary-button" [disabled]="isLoading() || pagination().page >= pagination().totalPages" (click)="changePage(pagination().page + 1)">Suivant</button>
+        </div>
+      </footer>
+    </section>
+  </div>
+</main>

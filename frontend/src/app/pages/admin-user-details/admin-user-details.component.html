@@ -1,0 +1,32 @@
+<main class="admin-page">
+  <div class="admin-shell">
+    <header class="admin-header">
+      <div>
+        <p class="admin-eyebrow">FoodExpress · Administration</p>
+        <h1>Détails de l'utilisateur</h1>
+      </div>
+      <a class="admin-secondary-button" routerLink="/admin/users">Retour aux utilisateurs</a>
+    </header>
+
+    @if (isLoading()) {
+      <section class="admin-card"><p class="admin-message">Chargement…</p></section>
+    } @else if (errorMessage()) {
+      <p class="admin-error" role="alert">{{ errorMessage() }}</p>
+    } @else if (user(); as account) {
+      <section class="admin-card">
+        <dl class="admin-details">
+          <div><dt>Nom complet</dt><dd>{{ account.prenom }} {{ account.nom }}</dd></div>
+          <div><dt>E-mail</dt><dd>{{ account.email }}</dd></div>
+          <div><dt>Téléphone</dt><dd>{{ account.telephone || 'Non renseigné' }}</dd></div>
+          <div><dt>Rôle</dt><dd>{{ account.role }}</dd></div>
+          <div><dt>Statut</dt><dd>{{ account.isActive ? 'Actif' : 'Inactif' }}</dd></div>
+          <div><dt>Date d'inscription</dt><dd>{{ account.createdAt | date:'medium' }}</dd></div>
+        </dl>
+        <div class="admin-buttons">
+          <a class="admin-link-button" [routerLink]="['/admin/users', account.id, 'edit']">Modifier l'utilisateur</a>
+          <a class="admin-link-button" [routerLink]="['/admin/users', account.id, 'password']">Changer le mot de passe</a>
+        </div>
+      </section>
+    }
+  </div>
+</main>

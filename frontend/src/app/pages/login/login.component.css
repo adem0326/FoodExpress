@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.recovery-contact {
+  margin: -4px 0 0;
+  color: var(--fe-secondary);
+  font-size: var(--fe-body-sm-size);
+  font-weight: 600;
+  line-height: 1.45;
+}

@@ -1,0 +1,38 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.field textarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 12px 14px;
+  border: 1px solid var(--fe-outline-variant);
+  border-radius: var(--fe-radius-default);
+  color: var(--fe-ink);
+  background: #fffdf9;
+  font: inherit;
+  outline: none;
+  resize: vertical;
+}
+
+.field textarea:focus {
+  border-color: var(--fe-primary);
+  box-shadow: 0 0 0 3px var(--fe-focus-ring);
+}
+
+.restaurant-section {
+  margin: 0 0 var(--fe-space-md);
+  padding: var(--fe-space-md);
+  border: 1px solid var(--fe-hairline);
+  border-radius: var(--fe-radius-md);
+  background: var(--fe-surface-container-low);
+}
+
+.restaurant-section legend {
+  padding: 0 8px;
+  color: var(--fe-secondary);
+  font-family: var(--fe-font-display);
+  font-size: var(--fe-label-lg-size);
+  font-weight: 700;
+}

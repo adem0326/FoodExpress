@@ -1,0 +1,118 @@
+<main class="auth-page">
+  <section class="brand-panel" aria-label="FoodExpress">
+    <div class="brand-mark">FE</div>
+    <h1>FoodExpress</h1>
+    <p>Vos plats préférés, préparés avec passion et livrés près de vous.</p>
+  </section>
+
+  <section class="auth-card" aria-labelledby="register-title">
+    <span class="fe-badge fe-badge-warm">
+      <span class="material-symbols-outlined" aria-hidden="true" style="font-size: 15px;">
+        {{ isRestaurantRegistration ? 'restaurant' : 'person_add' }}
+      </span>
+      {{ isRestaurantRegistration ? 'Espace restaurateur' : 'Espace client' }}
+    </span>
+
+    <h2 id="register-title" style="margin-top: 16px;">
+      {{ isRestaurantRegistration ? 'Créer un compte restaurateur' : 'Créer votre compte' }}
+    </h2>
+    <p class="subtitle">
+      {{ isRestaurantRegistration
+          ? 'Enregistrez votre restaurant et gérez votre menu sur FoodExpress.'
+          : 'Rejoignez la communauté FoodExpress' }}
+    </p>
+
+    @if (successMessage()) { <div class="alert success" role="status">{{ successMessage() }}</div> }
+    @if (errorMessage()) { <div class="alert error" role="alert">{{ errorMessage() }}</div> }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label for="nom">Nom</label>
+          <input id="nom" type="text" formControlName="nom" autocomplete="family-name" placeholder="Votre nom" />
+          @if (form.controls.nom.touched && form.controls.nom.hasError('required')) { <small>Le nom est requis.</small> }
+        </div>
+        <div class="field">
+          <label for="prenom">Prénom</label>
+          <input id="prenom" type="text" formControlName="prenom" autocomplete="given-name" placeholder="Votre prénom" />
+          @if (form.controls.prenom.touched && form.controls.prenom.hasError('required')) { <small>Le prénom est requis.</small> }
+        </div>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" autocomplete="email" placeholder="nom@exemple.com" />
+        @if (form.controls.email.touched && form.controls.email.hasError('required')) { <small>L'email est requis.</small> }
+        @if (form.controls.email.touched && form.controls.email.hasError('email')) { <small>Format email invalide.</small> }
+      </div>
+      <div class="field">
+        <label for="telephone">Téléphone</label>
+        <input id="telephone" type="tel" formControlName="telephone" autocomplete="tel" placeholder="+216 20 123 456" />
+        @if (form.controls.telephone.touched && form.controls.telephone.hasError('required')) { <small>Le téléphone est requis.</small> }
+      </div>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <div class="password-field">
+          <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" autocomplete="new-password" placeholder="8 caractères minimum" />
+          <button type="button" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">{{ showPassword ? 'Masquer' : 'Afficher' }}</button>
+        </div>
+        @if (form.controls.password.touched && form.controls.password.hasError('required')) { <small>Le mot de passe est requis.</small> }
+        @if (form.controls.password.touched && (form.controls.password.hasError('minlength') || form.controls.password.hasError('strongPassword'))) {
+          <small>Utilisez 8 caractères avec une majuscule, une minuscule et un chiffre.</small>
+        }
+      </div>
+      <div class="field">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <div class="password-field">
+          <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" autocomplete="new-password" placeholder="Répétez le mot de passe" />
+          <button type="button" (click)="showConfirmPassword = !showConfirmPassword" [attr.aria-label]="showConfirmPassword ? 'Masquer' : 'Afficher'">{{ showConfirmPassword ? 'Masquer' : 'Afficher' }}</button>
+        </div>
+        @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.hasError('required')) { <small>Confirmez le mot de passe.</small> }
+        @if (form.controls.confirmPassword.touched && form.hasError('passwordsMatch')) { <small>Les mots de passe ne correspondent pas.</small> }
+      </div>
+
+      @if (isRestaurantRegistration) {
+        <fieldset class="restaurant-section">
+          <legend>Informations du restaurant</legend>
+
+          <div class="field">
+            <label for="restaurantNom">Nom du restaurant</label>
+            <input id="restaurantNom" type="text" formControlName="restaurantNom" placeholder="Le nom affiché aux clients" />
+            @if (form.controls.restaurantNom.touched && form.controls.restaurantNom.hasError('required')) { <small>Le nom du restaurant est requis.</small> }
+            @if (form.controls.restaurantNom.touched && form.controls.restaurantNom.hasError('minlength')) { <small>Au moins 2 caractères.</small> }
+          </div>
+
+          <div class="field">
+            <label for="restaurantDescription">Description</label>
+            <textarea id="restaurantDescription" formControlName="restaurantDescription" rows="4" placeholder="Présentez votre cuisine et votre établissement"></textarea>
+            @if (form.controls.restaurantDescription.touched && form.controls.restaurantDescription.hasError('required')) { <small>La description est requise.</small> }
+          </div>
+
+          <div class="field">
+            <label for="restaurantAdresse">Adresse</label>
+            <input id="restaurantAdresse" type="text" formControlName="restaurantAdresse" autocomplete="street-address" placeholder="Adresse complète" />
+            @if (form.controls.restaurantAdresse.touched && form.controls.restaurantAdresse.hasError('required')) { <small>L'adresse est requise.</small> }
+          </div>
+
+          <div class="field">
+            <label for="cuisineType">Type de cuisine</label>
+            <input id="cuisineType" type="text" formControlName="cuisineType" placeholder="Ex. Cuisine tunisienne, italienne, végétarienne" />
+            @if (form.controls.cuisineType.touched && form.controls.cuisineType.hasError('required')) { <small>Le type de cuisine est requis.</small> }
+          </div>
+        </fieldset>
+      }
+
+      <button class="primary-button" type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting()
+            ? 'Création...'
+            : (isRestaurantRegistration ? 'Créer mon compte restaurateur' : 'Créer mon compte') }}
+      </button>
+    </form>
+
+    @if (isRestaurantRegistration) {
+      <p class="auth-link">Vous êtes client ? <a routerLink="/register">Créer un compte client</a></p>
+    } @else {
+      <p class="auth-link">Vous avez un restaurant ? <a routerLink="/register" [queryParams]="{ role: 'restaurateur' }">Register your restaurant</a></p>
+    }
+    <p class="auth-link">Déjà inscrit ? <a routerLink="/login">Se connecter</a></p>
+  </section>
+</main>

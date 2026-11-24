@@ -1,0 +1,71 @@
+<!-- Utilise la structure commune avec entete et pied de page -->
+<app-shell>
+  <!-- Affiche le contenu principal de la page d'accueil -->
+  <main class="fe-page home-page">
+    <!-- Affiche la presentation generale de FoodExpress -->
+    <section class="home-hero" aria-labelledby="home-title">
+      <!-- Affiche le texte principal de presentation -->
+      <div class="home-hero-copy">
+        <!-- Affiche le badge introductif -->
+        <span class="fe-badge fe-badge-warm">Saveurs locales livrees avec soin</span>
+        <!-- Affiche le titre principal -->
+        <h1 id="home-title">Découvrez les meilleurs restaurants près de chez vous</h1>
+        <!-- Explique la valeur du service -->
+        <p>Choisissez un restaurant, explorez son menu et profitez d'une livraison artisanale.</p>
+        <!-- Affiche les actions principales de la page -->
+        <div class="home-actions">
+          <!-- Ouvre la liste complete des restaurants -->
+          <a class="fe-btn fe-btn-primary" routerLink="/restaurants">Explorer les restaurants</a>
+          <!-- Propose un lien vers son espace aux utilisateurs connectes -->
+          @if (auth.currentUser()) {
+            <a class="fe-btn fe-btn-secondary" [routerLink]="auth.getHomeRoute()">Accéder à mon espace</a>
+          } @else {
+            <!-- Ouvre le parcours d'inscription aux visiteurs non connectes -->
+            <a class="fe-btn fe-btn-secondary" routerLink="/register">Créer un compte</a>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Affiche la liste des restaurants mis en avant -->
+    <section class="home-featured" aria-labelledby="featured-title">
+      <!-- Affiche le titre de la section -->
+      <h2 id="featured-title">Restaurants en vedette</h2>
+      <!-- Affiche une erreur lorsqu'elle existe -->
+      @if (errorMessage()) {
+        <!-- Affiche l'erreur avec son role accessible -->
+        <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
+      } @else if (restaurants().length) {
+        <!-- Affiche une grille de cartes lorsque les donnees existent -->
+        <div class="restaurant-grid">
+          <!-- Repete une carte pour chaque restaurant -->
+          @for (restaurant of restaurants(); track restaurant._id) {
+            <!-- Cree une carte cliquable vers les details -->
+            <article class="restaurant-card">
+              <!-- Affiche l'image du restaurant ou une image de secours -->
+              <img [src]="restaurant.imageUrl || 'https://placehold.co/600x400/e8d7b9/6b4430?text=FoodExpress'" [alt]="restaurant.nom" />
+              <!-- Affiche les informations principales -->
+              <div class="restaurant-card-body">
+                <!-- Affiche le nom du restaurant -->
+                <h3>{{ restaurant.nom }}</h3>
+                <!-- Affiche le type de cuisine -->
+                <p class="restaurant-cuisine">{{ restaurant.cuisineType }}</p>
+                <!-- Affiche un extrait de la description -->
+                <p>{{ restaurant.description }}</p>
+                <!-- Affiche la disponibilite actuelle -->
+                <span class="restaurant-status" [class.is-open]="restaurant.isOpen">
+                  {{ restaurant.isOpen ? 'Ouvert' : 'Ferme' }}
+                </span>
+                <!-- Affiche le lien vers les details -->
+                <a class="fe-btn fe-btn-secondary" [routerLink]="['/restaurants', restaurant._id]">Voir le restaurant</a>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <!-- Affiche un message lorsque aucun restaurant n'est mis en avant -->
+        <p class="fe-muted">Aucun restaurant mis en avant pour le moment.</p>
+      }
+    </section>
+  </main>
+</app-shell>

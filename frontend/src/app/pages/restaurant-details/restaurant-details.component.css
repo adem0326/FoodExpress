@@ -1,0 +1,27 @@
+:host { display: block; }
+.restaurant-details-page { display: flex; flex-direction: column; gap: 24px; }
+.restaurant-details-hero { display: grid; grid-template-columns: 1.25fr 1fr; overflow: hidden; border: 1px solid var(--fe-card-border); border-radius: 20px; background: white; box-shadow: var(--fe-shadow-card); }
+.restaurant-details-hero img { width: 100%; height: 360px; object-fit: cover; }
+.restaurant-details-info { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 12px; padding: 32px; }
+.restaurant-details-info h1, .restaurant-details-info p { margin: 0; }
+.restaurant-status { padding: 5px 12px; border-radius: 999px; background: #e8e3dc; }
+.restaurant-status.is-open { background: #dcefd6; color: #2f6b28; }
+.restaurant-details-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.restaurant-details-grid article { padding: 20px; border: 1px solid var(--fe-card-border); border-radius: 14px; background: white; }
+.restaurant-menu { display: flex; flex-direction: column; gap: 20px; }
+.restaurant-menu > header h2 { margin: 8px 0 0; }
+.restaurant-menu-category { display: flex; flex-direction: column; gap: 12px; }
+.restaurant-menu-category h3 { margin: 0; }
+.restaurant-menu-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.restaurant-menu-item { display: grid; grid-template-columns: 140px minmax(0, 1fr); overflow: hidden; border: 1px solid var(--fe-card-border); border-radius: 14px; background: white; box-shadow: var(--fe-shadow-card); }
+.restaurant-menu-item img { width: 140px; height: 100%; min-height: 150px; object-fit: cover; }
+.restaurant-menu-item-info { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px; }
+.restaurant-menu-item-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; width: 100%; }
+.restaurant-menu-item-heading h4, .restaurant-menu-item-info p { margin: 0; }
+.restaurant-menu-item-heading strong { white-space: nowrap; color: var(--fe-primary); }
+.dish-availability { padding: 4px 9px; border-radius: 999px; background: #f3d3d0; color: #9b2d24; font-size: 0.85rem; }
+.dish-availability.is-available { background: #dcefd6; color: #2f6b28; }
+.restaurant-menu-item.is-unavailable img { filter: grayscale(0.65); }
+@media (max-width: 800px) { .restaurant-details-hero { grid-template-columns: 1fr; } .restaurant-details-grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .restaurant-menu-list { grid-template-columns: 1fr; } }
+@media (max-width: 500px) { .restaurant-menu-item { grid-template-columns: 1fr; } .restaurant-menu-item img { width: 100%; height: 180px; } }

@@ -1,0 +1,76 @@
+<app-shell>
+  <main class="fe-page">
+    <header class="restaurant-list-header">
+      <div>
+        <span class="fe-badge fe-badge-warm">Découverte FoodExpress</span>
+        <h1>Restaurants</h1>
+        <p>Recherchez un nom, filtrez la cuisine ou choisissez les établissements ouverts.</p>
+      </div>
+    </header>
+
+    <section class="restaurant-filters" aria-label="Filtres restaurants">
+      <label>
+        <span>Rechercher</span>
+        <input type="search" [formControl]="search" placeholder="Nom du restaurant" />
+      </label>
+      <label>
+        <span>Type de cuisine</span>
+        <select [value]="cuisine()" (change)="setCuisine($event)">
+          <option value="">Toutes les cuisines</option>
+          <option value="tunisienne">Tunisienne</option>
+          <option value="italienne">Italienne</option>
+          <option value="libanaise">Libanaise</option>
+          <option value="française">Française</option>
+          <option value="asiatique">Asiatique</option>
+        </select>
+      </label>
+      <label>
+        <span>Disponibilité</span>
+        <select [value]="availability()" (change)="setAvailability($event)">
+          <option value="all">Tous</option>
+          <option value="open">Ouverts</option>
+          <option value="closed">Fermés</option>
+        </select>
+      </label>
+      <label>
+        <span>Trier</span>
+        <select [value]="sort()" (change)="setSort($event)">
+          <option value="alphabetical">Nom alphabétique</option>
+          <option value="featured">Mis en avant</option>
+        </select>
+      </label>
+      <button type="button" class="fe-btn fe-btn-primary" (click)="searchRestaurants()">Rechercher</button>
+    </section>
+
+    @if (errorMessage()) {
+      <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
+    } @else if (isLoading()) {
+      <p class="fe-muted" role="status">Chargement des restaurants…</p>
+    } @else if (restaurants().length) {
+      <section class="restaurant-grid" aria-label="Liste des restaurants">
+        @for (restaurant of restaurants(); track restaurant._id) {
+          <article class="restaurant-card">
+            <img [src]="restaurant.imageUrl || 'https://placehold.co/600x400/e8d7b9/6b4430?text=FoodExpress'" [alt]="restaurant.nom" />
+            <div class="restaurant-card-body">
+              <h2>{{ restaurant.nom }}</h2>
+              <p class="restaurant-cuisine">{{ restaurant.cuisineType }}</p>
+              <p>{{ restaurant.description }}</p>
+              <p>Frais de livraison : {{ restaurant.deliveryFee | number:'1.2-2' }} DT</p>
+              <span class="restaurant-status" [class.is-open]="restaurant.isOpen">{{ restaurant.isOpen ? 'Ouvert' : 'Fermé' }}</span>
+              <a class="fe-btn fe-btn-secondary" [routerLink]="['/restaurants', restaurant._id]">Voir les détails</a>
+            </div>
+          </article>
+        }
+      </section>
+    } @else {
+      <p class="fe-muted">Aucun restaurant ne correspond à ces critères.</p>
+    }
+
+    <footer class="restaurant-pagination">
+      <span>{{ pagination().total }} restaurant(s)</span>
+      <button type="button" class="fe-btn fe-btn-secondary" [disabled]="isLoading() || pagination().page <= 1" (click)="changePage(pagination().page - 1)">Précédent</button>
+      <span>Page {{ pagination().page }} / {{ pagination().totalPages || 1 }}</span>
+      <button type="button" class="fe-btn fe-btn-secondary" [disabled]="isLoading() || pagination().page >= pagination().totalPages" (click)="changePage(pagination().page + 1)">Suivant</button>
+    </footer>
+  </main>
+</app-shell>
