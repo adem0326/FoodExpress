@@ -21,7 +21,7 @@ router.get('/admin/all', authMiddleware, authorizeRoles('admin'), restaurantCont
 // Permet de consulter les details publics d'un restaurant.
 router.get('/:id', restaurantController.getRestaurant);
 // Permet au restaurateur ou a l'administrateur de creer un restaurant.
-router.post('/', authMiddleware, authorizeRoles('restaurateur', 'admin'), restaurantController.createRestaurant);
+router.post('/', authMiddleware, authorizeRoles('restaurateur'), restaurantController.createRestaurant);
 // Permet au proprietaire ou a l'administrateur de modifier un restaurant.
 router.put('/:id', authMiddleware, authorizeRoles('restaurateur', 'admin'), restaurantController.updateRestaurant);
 // Permet au proprietaire ou a l'administrateur de supprimer un restaurant.

@@ -9,12 +9,15 @@
     </header>
 
     @if (successMessage()) {
-      <p class="fe-alert fe-alert-success" role="status">{{ successMessage() }}</p>
+    <p class="fe-alert fe-alert-success" role="status">{{ successMessage() }}</p>
     }
     @if (errorMessage()) {
-      <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
+    <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
     }
-
+    @if (
+    auth.getCurrentUser()?.role === 'restaurateur' ||
+    (auth.getCurrentUser()?.role === 'admin' && editingId())
+    ) {
     <section class="manage-card" aria-labelledby="restaurant-form-title">
       <h2 id="restaurant-form-title">{{ editingId() ? 'Modifier le restaurant' : 'Ajouter un restaurant' }}</h2>
       <form [formGroup]="restaurantForm" (ngSubmit)="submitRestaurant()" novalidate>
@@ -51,72 +54,83 @@
           <span>Restaurant ouvert</span>
         </label>
         @if (auth.getCurrentUser()?.role === 'admin') {
-          <label class="field-checkbox">
-            <input type="checkbox" formControlName="isFeatured" />
-            <span>Mettre en avant</span>
-          </label>
+        <label class="field-checkbox">
+          <input type="checkbox" formControlName="isFeatured" />
+          <span>Mettre en avant</span>
+        </label>
         }
         <div class="manage-form-actions field-wide">
-          <button type="submit" class="fe-btn fe-btn-primary">{{ editingId() ? 'Enregistrer' : 'Créer le restaurant' }}</button>
+          <button type="submit" class="fe-btn fe-btn-primary">{{ editingId() ? 'Enregistrer' : 'Créer le restaurant'
+            }}</button>
           @if (editingId()) {
-            <button type="button" class="fe-btn fe-btn-secondary" (click)="cancelEdit()">Annuler</button>
+          <button type="button" class="fe-btn fe-btn-secondary" (click)="cancelEdit()">Annuler</button>
           }
         </div>
       </form>
     </section>
+    }
+
+
 
     <section class="manage-card" aria-label="Liste des restaurants">
       @if (isLoading()) {
-        <p class="fe-muted" role="status">Chargement des restaurants…</p>
+      <p class="fe-muted" role="status">Chargement des restaurants…</p>
       } @else if (restaurants().length) {
-        <div class="manage-table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Cuisine</th>
-                <th>Statut</th>
-                <th>Ouvert</th>
-                <th>Livraison</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (restaurant of restaurants(); track restaurant._id) {
-                <tr>
-                  <td>{{ restaurant.nom }}</td>
-                  <td>{{ restaurant.cuisineType }}</td>
-                  <td>
-                    <span class="manage-status" [class.approved]="restaurant.status === 'approved'" [class.suspended]="restaurant.status === 'suspended'">
-                      {{ restaurant.status === 'approved' ? 'Validé' : restaurant.status === 'suspended' ? 'Suspendu' : 'En attente' }}
-                    </span>
-                  </td>
-                  <td>{{ restaurant.isOpen ? 'Oui' : 'Non' }}</td>
-                  <td>{{ restaurant.deliveryFee }} DT</td>
-                  <td>
-                    <div class="manage-actions">
-                      <button type="button" class="fe-btn fe-btn-secondary" (click)="editRestaurant(restaurant)">Modifier</button>
-                      <button type="button" class="fe-btn fe-btn-secondary is-danger" (click)="deleteRestaurant(restaurant)">Supprimer</button>
-                      @if (auth.getCurrentUser()?.role === 'restaurateur') {
-                        <a class="fe-btn fe-btn-secondary" [routerLink]="['/restaurateur/restaurants', restaurant._id, 'menu']">Gérer le menu</a>
-                      }
-                      @if (auth.getCurrentUser()?.role === 'admin') {
-                        @if (restaurant.status !== 'approved') {
-                          <button type="button" class="fe-btn fe-btn-primary" (click)="changeStatus(restaurant, 'approved')">Valider</button>
-                        }
-                        @if (restaurant.status !== 'suspended') {
-                          <button type="button" class="fe-btn fe-btn-secondary" (click)="changeStatus(restaurant, 'suspended')">Suspendre</button>
-                        }
-                      }
-                    </div>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+      <div class="manage-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Cuisine</th>
+              <th>Statut</th>
+              <th>Ouvert</th>
+              <th>Livraison</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (restaurant of restaurants(); track restaurant._id) {
+            <tr>
+              <td>{{ restaurant.nom }}</td>
+              <td>{{ restaurant.cuisineType }}</td>
+              <td>
+                <span class="manage-status" [class.approved]="restaurant.status === 'approved'"
+                  [class.suspended]="restaurant.status === 'suspended'">
+                  {{ restaurant.status === 'approved' ? 'Validé' : restaurant.status === 'suspended' ? 'Suspendu' : 'En
+                  attente' }}
+                </span>
+              </td>
+              <td>{{ restaurant.isOpen ? 'Oui' : 'Non' }}</td>
+              <td>{{ restaurant.deliveryFee }} DT</td>
+              <td>
+                <div class="manage-actions">
+                  <button type="button" class="fe-btn fe-btn-secondary"
+                    (click)="editRestaurant(restaurant)">Modifier</button>
+                  <button type="button" class="fe-btn fe-btn-secondary is-danger"
+                    (click)="deleteRestaurant(restaurant)">Supprimer</button>
+                  @if (auth.getCurrentUser()?.role === 'restaurateur') {
+                  <a class="fe-btn fe-btn-secondary"
+                    [routerLink]="['/restaurateur/restaurants', restaurant._id, 'menu']">Gérer le menu</a>
+                  }
+                  @if (auth.getCurrentUser()?.role === 'admin') {
+                  @if (restaurant.status !== 'approved') {
+                  <button type="button" class="fe-btn fe-btn-primary"
+                    (click)="changeStatus(restaurant, 'approved')">Valider</button>
+                  }
+                  @if (restaurant.status !== 'suspended') {
+                  <button type="button" class="fe-btn fe-btn-secondary"
+                    (click)="changeStatus(restaurant, 'suspended')">Suspendre</button>
+                  }
+                  }
+                </div>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
       } @else {
-        <p class="fe-muted">Aucun restaurant à afficher.</p>
+      <p class="fe-muted">Aucun restaurant à afficher.</p>
       }
     </section>
   </main>
