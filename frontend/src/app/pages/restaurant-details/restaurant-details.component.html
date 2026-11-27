@@ -42,38 +42,52 @@
         } @else if (isMenuLoading()) {
           <p class="fe-muted" role="status">Chargement du menu…</p>
         } @else if (dishes().length) {
-          @for (category of dishCategories; track category) {
-            @let categoryDishes = dishesForCategory(category);
-            @if (categoryDishes.length) {
-              <section class="restaurant-menu-category" [attr.aria-label]="category">
-                <h3>{{ category }}</h3>
-                <div class="restaurant-menu-list">
-                  @for (dish of categoryDishes; track dish._id) {
-                    <article class="restaurant-menu-item" [class.is-unavailable]="!dish.disponible">
-                      <img [src]="dish.imageUrl || 'https://placehold.co/240x180/e8d7b9/6b4430?text=FoodExpress'" [alt]="dish.nom" />
-                      <div class="restaurant-menu-item-info">
-                        <div class="restaurant-menu-item-heading">
-                          <h4>{{ dish.nom }}</h4>
-                          <strong>{{ dish.prix | number:'1.2-2' }} DT</strong>
-                        </div>
-                        <p>{{ dish.description }}</p>
-                        <span class="dish-availability" [class.is-available]="dish.disponible">
-                          {{ dish.disponible ? 'Disponible' : 'Indisponible' }}
-                        </span>
-                        <button
-                          type="button"
-                          class="fe-btn fe-btn-primary"
-                          [disabled]="!dish.disponible || !restaurant.isOpen"
-                          (click)="addToCart(dish)">
-                          Ajouter au panier
-                        </button>
-                      </div>
-                    </article>
-                  }
-                </div>
-              </section>
+          <div class="restaurant-menu-filters" role="group" aria-label="Filtrer les plats par catégorie">
+            <button
+              type="button"
+              class="restaurant-menu-filter"
+              [class.is-active]="activeDishCategory() === null"
+              [attr.aria-pressed]="activeDishCategory() === null"
+              (click)="selectDishCategory(null)">
+              Tous
+            </button>
+            @for (category of dishCategories; track category) {
+              @if (dishesForCategory(category).length) {
+                <button
+                  type="button"
+                  class="restaurant-menu-filter"
+                  [class.is-active]="activeDishCategory() === category"
+                  [attr.aria-pressed]="activeDishCategory() === category"
+                  (click)="selectDishCategory(category)">
+                  {{ category }}
+                </button>
+              }
             }
-          }
+          </div>
+          <div class="restaurant-menu-list" aria-label="Plats du menu">
+            @for (dish of visibleDishes(); track dish._id) {
+              <article class="restaurant-menu-item" [class.is-unavailable]="!dish.disponible">
+                <img [src]="dish.imageUrl || 'https://placehold.co/240x180/e8d7b9/6b4430?text=FoodExpress'" [alt]="dish.nom" />
+                <div class="restaurant-menu-item-info">
+                  <div class="restaurant-menu-item-heading">
+                    <h4>{{ dish.nom }}</h4>
+                    <strong>{{ dish.prix | number:'1.2-2' }} DT</strong>
+                  </div>
+                  <p>{{ dish.description }}</p>
+                  <span class="dish-availability" [class.is-available]="dish.disponible">
+                    {{ dish.disponible ? 'Disponible' : 'Indisponible' }}
+                  </span>
+                  <button
+                    type="button"
+                    class="fe-btn fe-btn-primary"
+                    [disabled]="!dish.disponible || !restaurant.isOpen"
+                    (click)="addToCart(dish)">
+                    {{ dish.disponible ? 'Ajouter au panier' : 'Indisponible' }}
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
         } @else {
           <p class="fe-muted">Le menu de ce restaurant n’est pas encore disponible.</p>
         }

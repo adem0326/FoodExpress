@@ -1,11 +1,27 @@
 <app-shell>
   <main class="fe-page manage-dishes-page">
     <header class="manage-dishes-header">
-      <div>
-        <span class="fe-badge fe-badge-warm">Gestion des menus</span>
-        <h1>{{ restaurant()?.nom || 'Menu du restaurant' }}</h1>
+      <div class="manage-dishes-heading">
+        <span class="manage-dishes-eyebrow">{{ restaurant()?.nom || 'Espace restaurateur' }}</span>
+        <h1>Gestion de la carte</h1>
+        <p>Gérez vos plats, leurs catégories et leur disponibilité.</p>
       </div>
-      <a class="fe-btn fe-btn-secondary" routerLink="/restaurateur/restaurants">Retour aux restaurants</a>
+      <div class="manage-dishes-header-actions">
+        <div class="manage-dishes-summary" aria-label="Résumé du menu">
+          <div>
+            <span>Articles disponibles</span>
+            <strong>{{ availableDishesCount() }}</strong>
+          </div>
+          <div>
+            <span>Indisponibles</span>
+            <strong>{{ unavailableDishesCount() }}</strong>
+          </div>
+        </div>
+        <button type="button" class="fe-btn fe-btn-primary" (click)="startNewDish()">
+          <span class="material-symbols-outlined" aria-hidden="true">add</span>
+          Nouveau plat
+        </button>
+      </div>
     </header>
 
     @if (successMessage()) {
@@ -15,84 +31,148 @@
       <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
     }
 
-    <section class="manage-dishes-card" aria-labelledby="dish-form-title">
-      <h2 id="dish-form-title">{{ editingId() ? 'Modifier le plat' : 'Ajouter un plat' }}</h2>
-      <form [formGroup]="dishForm" (ngSubmit)="submitDish()" novalidate>
-        <label>
-          <span>Nom du plat</span>
-          <input type="text" formControlName="nom" />
-        </label>
-        <label>
-          <span>Catégorie</span>
-          <select formControlName="categorie">
-            @for (category of categories; track category) {
-              <option [value]="category">{{ category }}</option>
-            }
-          </select>
-        </label>
-        <label>
-          <span>Prix (DT)</span>
-          <input type="number" min="0" max="100000" step="0.1" formControlName="prix" />
-        </label>
-        <label>
-          <span>URL de l’image</span>
-          <input type="url" formControlName="imageUrl" />
-        </label>
-        <label class="dish-field-wide">
-          <span>Description</span>
-          <textarea formControlName="description" rows="3"></textarea>
-        </label>
-        <label class="dish-field-checkbox">
-          <input type="checkbox" formControlName="disponible" />
-          <span>Plat disponible</span>
-        </label>
-        <div class="dish-form-actions dish-field-wide">
-          <button type="submit" class="fe-btn fe-btn-primary" [disabled]="isSaving()">
-            {{ isSaving() ? 'Enregistrement…' : editingId() ? 'Enregistrer' : 'Ajouter le plat' }}
+    @if (showDishForm()) {
+      <section class="manage-dishes-card manage-dishes-form" aria-labelledby="dish-form-title">
+        <header class="dish-form-heading">
+          <div>
+            <span class="manage-dishes-eyebrow">{{ editingId() ? 'Mise à jour' : 'Nouvel article' }}</span>
+            <h2 id="dish-form-title">{{ editingId() ? 'Modifier le plat' : 'Ajouter un plat' }}</h2>
+          </div>
+          <button type="button" class="dish-icon-button" aria-label="Fermer le formulaire" (click)="cancelEdit()">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
           </button>
-          @if (editingId()) {
+        </header>
+        <form [formGroup]="dishForm" (ngSubmit)="submitDish()" novalidate>
+          <label>
+            <span>Nom du plat</span>
+            <input type="text" formControlName="nom" />
+          </label>
+          <label>
+            <span>Catégorie</span>
+            <select formControlName="categorie">
+              @for (category of categories; track category) {
+                <option [value]="category">{{ category }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            <span>Prix (DT)</span>
+            <input type="number" min="0" max="100000" step="0.1" formControlName="prix" />
+          </label>
+          <label>
+            <span>URL de l’image</span>
+            <input type="url" formControlName="imageUrl" />
+          </label>
+          <label class="dish-field-wide">
+            <span>Description</span>
+            <textarea formControlName="description" rows="3"></textarea>
+          </label>
+          <label class="dish-field-checkbox">
+            <input type="checkbox" formControlName="disponible" />
+            <span>Plat disponible</span>
+          </label>
+          <div class="dish-form-actions dish-field-wide">
+            <button type="submit" class="fe-btn fe-btn-primary" [disabled]="isSaving()">
+              {{ isSaving() ? 'Enregistrement…' : editingId() ? 'Enregistrer' : 'Ajouter le plat' }}
+            </button>
             <button type="button" class="fe-btn fe-btn-secondary" (click)="cancelEdit()">Annuler</button>
+          </div>
+        </form>
+      </section>
+    }
+
+    <section class="manage-dishes-card manage-dishes-list" aria-label="Plats du restaurant">
+      <div class="dish-toolbar">
+        <div class="dish-category-tabs" role="group" aria-label="Filtrer par catégorie">
+          <button
+            type="button"
+            class="dish-category-chip"
+            [class.is-active]="selectedCategory() === 'Tous'"
+            [attr.aria-pressed]="selectedCategory() === 'Tous'"
+            (click)="selectedCategory.set('Tous')">
+            Tous <span>{{ categoryCount('Tous') }}</span>
+          </button>
+          @for (category of categories; track category) {
+            @if (categoryCount(category)) {
+              <button
+                type="button"
+                class="dish-category-chip"
+                [class.is-active]="selectedCategory() === category"
+                [attr.aria-pressed]="selectedCategory() === category"
+                (click)="selectedCategory.set(category)">
+                {{ category }} <span>{{ categoryCount(category) }}</span>
+              </button>
+            }
           }
         </div>
-      </form>
-    </section>
+        <div class="dish-list-filters">
+          <label class="dish-search">
+            <span class="material-symbols-outlined" aria-hidden="true">search</span>
+            <input type="search" aria-label="Rechercher un plat" placeholder="Rechercher un plat…" [value]="searchTerm()" (input)="setSearchTerm($event)" />
+          </label>
+          <select aria-label="Filtrer par disponibilité" [value]="availabilityFilter()" (change)="setAvailabilityFilter($event)">
+            <option value="all">Tous les statuts</option>
+            <option value="available">Disponible</option>
+            <option value="unavailable">Indisponible</option>
+          </select>
+        </div>
+      </div>
 
-    <section class="manage-dishes-card" aria-label="Plats du restaurant">
       @if (isLoading()) {
         <p class="fe-muted" role="status">Chargement du menu…</p>
-      } @else if (dishes().length) {
-        <div class="dish-table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Plat</th>
-                <th>Catégorie</th>
-                <th>Prix</th>
-                <th>Disponibilité</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (dish of dishes(); track dish._id) {
-                <tr>
-                  <td>{{ dish.nom }}</td>
-                  <td>{{ dish.categorie }}</td>
-                  <td>{{ dish.prix }} DT</td>
-                  <td>{{ dish.disponible ? 'Disponible' : 'Indisponible' }}</td>
-                  <td>
-                    <div class="dish-actions">
-                      <button type="button" class="fe-btn fe-btn-secondary" (click)="editDish(dish)">Modifier</button>
-                      <button type="button" class="fe-btn fe-btn-secondary dish-delete" (click)="deleteDish(dish)">Supprimer</button>
-                    </div>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
+      } @else if (filteredDishes().length) {
+        <div class="dish-list">
+          @for (dish of filteredDishes(); track dish._id) {
+            <article class="dish-row" [class.is-unavailable]="!dish.disponible">
+              <div class="dish-row-image">
+                @if (dish.imageUrl) {
+                  <img [src]="dish.imageUrl" [alt]="dish.nom" />
+                } @else {
+                  <div class="dish-image-placeholder" role="img" [attr.aria-label]="'Image non disponible pour ' + dish.nom">
+                    <svg viewBox="0 0 48 48" aria-hidden="true">
+                      <circle cx="24" cy="24" r="17"></circle>
+                      <circle cx="24" cy="24" r="11"></circle>
+                    </svg>
+                  </div>
+                }
+              </div>
+              <div class="dish-row-copy">
+                <div class="dish-row-title">
+                  <h2>{{ dish.nom }}</h2>
+                  <span class="dish-row-category">{{ dish.categorie }}</span>
+                </div>
+                <p>{{ dish.description }}</p>
+              </div>
+              <strong class="dish-row-price">{{ dish.prix | number:'1.2-2' }} DT</strong>
+              <button
+                type="button"
+                class="dish-availability-toggle"
+                [class.is-available]="dish.disponible"
+                [attr.aria-pressed]="dish.disponible"
+                [attr.aria-label]="(dish.disponible ? 'Rendre indisponible ' : 'Rendre disponible ') + dish.nom"
+                [disabled]="isSaving()"
+                (click)="toggleAvailability(dish)">
+                <span>{{ dish.disponible ? 'Disponible' : 'Indisponible' }}</span>
+                <span class="dish-toggle-track" aria-hidden="true"><span></span></span>
+              </button>
+              <div class="dish-row-actions">
+                <button type="button" class="dish-icon-button" [attr.aria-label]="'Modifier ' + dish.nom" (click)="editDish(dish)">
+                  <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                </button>
+                <button type="button" class="dish-icon-button is-danger" [attr.aria-label]="'Supprimer ' + dish.nom" (click)="deleteDish(dish)">
+                  <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+                </button>
+              </div>
+            </article>
+          }
         </div>
       } @else {
-        <p class="fe-muted">Aucun plat dans le menu. Ajoutez votre premier plat ci-dessus.</p>
+        <p class="fe-muted dish-empty">
+          {{ dishes().length ? 'Aucun plat ne correspond à ces filtres.' : 'Aucun plat dans le menu. Ajoutez votre premier plat.' }}
+        </p>
       }
     </section>
+
+    <a class="fe-btn fe-btn-secondary manage-dishes-back" routerLink="/restaurateur/restaurants">Retour aux restaurants</a>
   </main>
 </app-shell>

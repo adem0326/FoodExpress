@@ -1,71 +1,139 @@
 <!-- Utilise la structure commune avec entete et pied de page -->
 <app-shell>
-  <!-- Affiche le contenu principal de la page d'accueil -->
-  <main class="fe-page home-page">
-    <!-- Affiche la presentation generale de FoodExpress -->
+  <main class="home-page">
     <section class="home-hero" aria-labelledby="home-title">
-      <!-- Affiche le texte principal de presentation -->
-      <div class="home-hero-copy">
-        <!-- Affiche le badge introductif -->
-        <span class="fe-badge fe-badge-warm">Saveurs locales livrees avec soin</span>
-        <!-- Affiche le titre principal -->
-        <h1 id="home-title">Découvrez les meilleurs restaurants près de chez vous</h1>
-        <!-- Explique la valeur du service -->
-        <p>Choisissez un restaurant, explorez son menu et profitez d'une livraison artisanale.</p>
-        <!-- Affiche les actions principales de la page -->
-        <div class="home-actions">
-          <!-- Ouvre la liste complete des restaurants -->
-          <a class="fe-btn fe-btn-primary" routerLink="/restaurants">Explorer les restaurants</a>
-          <!-- Propose un lien vers son espace aux utilisateurs connectes -->
-          @if (auth.currentUser()) {
-            <a class="fe-btn fe-btn-secondary" [routerLink]="auth.getHomeRoute()">Accéder à mon espace</a>
-          } @else {
-            <!-- Ouvre le parcours d'inscription aux visiteurs non connectes -->
-            <a class="fe-btn fe-btn-secondary" routerLink="/register">Créer un compte</a>
-          }
+      <div class="home-hero-inner">
+        <div class="home-hero-copy">
+          <span class="home-eyebrow">Circuits courts &amp; toques artisanales</span>
+          <h1 id="home-title">Des saveurs fraîches et artisanales, livrées chez vous.</h1>
+          <p>Découvrez les restaurants locaux, leurs menus et les artisans qui cuisinent près de chez vous.</p>
+          <div class="home-actions">
+            <a class="fe-btn fe-btn-primary" routerLink="/restaurants">Explorer les restaurants</a>
+            @if (auth.currentUser()) {
+              <a class="fe-btn fe-btn-secondary" [routerLink]="auth.getWorkspaceRoute()">Accéder à mon espace</a>
+            } @else {
+              <a class="fe-btn fe-btn-secondary" routerLink="/register">Créer un compte</a>
+            }
+          </div>
+          <div class="home-trust-points" aria-label="Nos engagements">
+            <span><span class="material-symbols-outlined" aria-hidden="true">agriculture</span> Producteurs locaux</span>
+            <span><span class="material-symbols-outlined" aria-hidden="true">pedal_bike</span> Livraison attentive</span>
+            <span><span class="material-symbols-outlined" aria-hidden="true">verified</span> Saveurs artisanales</span>
+          </div>
+        </div>
+
+        <div class="home-hero-visual">
+          <div class="home-hero-feature" role="group" aria-roledescription="carrousel" aria-label="Photos de repas">
+            <div class="home-hero-image">
+              @for (slide of mealSlides; track slide.src; let index = $index) {
+                <img
+                  [src]="slide.src"
+                  [alt]="slide.alt"
+                  [class.is-active]="activeMealSlide() === index"
+                  [attr.aria-hidden]="activeMealSlide() === index ? null : 'true'"
+                />
+              }
+              <div class="home-hero-caption">
+                <span>
+                  <strong>Des plats qui donnent envie</strong>
+                  <small>Une inspiration gourmande toutes les deux secondes</small>
+                </span>
+                <span class="home-hero-status is-open">Fait avec soin</span>
+              </div>
+              <div class="home-meal-indicators" aria-hidden="true">
+                @for (slide of mealSlides; track slide.src; let index = $index) {
+                  <span [class.is-active]="activeMealSlide() === index"></span>
+                }
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Affiche la liste des restaurants mis en avant -->
-    <section class="home-featured" aria-labelledby="featured-title">
-      <!-- Affiche le titre de la section -->
-      <h2 id="featured-title">Restaurants en vedette</h2>
-      <!-- Affiche une erreur lorsqu'elle existe -->
-      @if (errorMessage()) {
-        <!-- Affiche l'erreur avec son role accessible -->
-        <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
-      } @else if (restaurants().length) {
-        <!-- Affiche une grille de cartes lorsque les donnees existent -->
-        <div class="restaurant-grid">
-          <!-- Repete une carte pour chaque restaurant -->
-          @for (restaurant of restaurants(); track restaurant._id) {
-            <!-- Cree une carte cliquable vers les details -->
-            <article class="restaurant-card">
-              <!-- Affiche l'image du restaurant ou une image de secours -->
-              <img [src]="restaurant.imageUrl || 'https://placehold.co/600x400/e8d7b9/6b4430?text=FoodExpress'" [alt]="restaurant.nom" />
-              <!-- Affiche les informations principales -->
-              <div class="restaurant-card-body">
-                <!-- Affiche le nom du restaurant -->
-                <h3>{{ restaurant.nom }}</h3>
-                <!-- Affiche le type de cuisine -->
-                <p class="restaurant-cuisine">{{ restaurant.cuisineType }}</p>
-                <!-- Affiche un extrait de la description -->
-                <p>{{ restaurant.description }}</p>
-                <!-- Affiche la disponibilite actuelle -->
-                <span class="restaurant-status" [class.is-open]="restaurant.isOpen">
-                  {{ restaurant.isOpen ? 'Ouvert' : 'Ferme' }}
-                </span>
-                <!-- Affiche le lien vers les details -->
-                <a class="fe-btn fe-btn-secondary" [routerLink]="['/restaurants', restaurant._id]">Voir le restaurant</a>
-              </div>
-            </article>
-          }
+    <div class="home-content">
+      <section class="home-categories" aria-labelledby="home-categories-title">
+        <header class="home-section-heading">
+          <div>
+            <h2 id="home-categories-title">Envie du moment</h2>
+            <p>Explorez les inspirations culinaires de saison.</p>
+          </div>
+          <a routerLink="/restaurants">Voir les restaurants <span aria-hidden="true">→</span></a>
+        </header>
+        <div class="home-category-grid">
+          <div class="home-category"><span class="material-symbols-outlined" aria-hidden="true">restaurant</span><span>Bistronomique</span></div>
+          <div class="home-category"><span class="material-symbols-outlined" aria-hidden="true">spa</span><span>Végétarien</span></div>
+          <div class="home-category"><span class="material-symbols-outlined" aria-hidden="true">bakery_dining</span><span>Boulangerie</span></div>
+          <div class="home-category"><span class="material-symbols-outlined" aria-hidden="true">ramen_dining</span><span>Bowls &amp; santé</span></div>
+          <div class="home-category"><span class="material-symbols-outlined" aria-hidden="true">lunch_dining</span><span>Street food</span></div>
+          <div class="home-category"><span class="material-symbols-outlined" aria-hidden="true">local_pizza</span><span>Italien artisanal</span></div>
+          <div class="home-category"><span class="material-symbols-outlined" aria-hidden="true">set_meal</span><span>Japonais bento</span></div>
+          <div class="home-category"><span class="material-symbols-outlined" aria-hidden="true">coffee</span><span>Brunch &amp; café</span></div>
         </div>
-      } @else {
-        <!-- Affiche un message lorsque aucun restaurant n'est mis en avant -->
-        <p class="fe-muted">Aucun restaurant mis en avant pour le moment.</p>
-      }
-    </section>
+      </section>
+
+      <section class="home-promo" aria-label="Cuisine locale">
+        <span class="home-promo-icon material-symbols-outlined" aria-hidden="true">local_offer</span>
+        <div>
+          <span class="home-promo-eyebrow">Le goût du local</span>
+          <h2>De belles adresses, livrées avec soin.</h2>
+          <p>Rencontrez les restaurants et artisans de votre quartier.</p>
+        </div>
+        <a class="fe-btn fe-btn-primary" routerLink="/restaurants">Découvrir</a>
+      </section>
+
+      <section class="home-restaurants" aria-labelledby="home-restaurants-title">
+        <header class="home-section-heading">
+          <div>
+            <h2 id="home-restaurants-title">Restaurants coup de cœur</h2>
+            <p>Des cuisines de caractère, préparées près de chez vous.</p>
+          </div>
+          <a routerLink="/restaurants">Explorer la liste <span aria-hidden="true">→</span></a>
+        </header>
+        @if (errorMessage()) {
+          <p class="fe-alert fe-alert-error home-state-message" role="alert">{{ errorMessage() }}</p>
+        } @else if (restaurants().length) {
+          <div class="home-restaurant-grid">
+            @for (restaurant of restaurants(); track restaurant._id) {
+              <a class="home-restaurant-card" [routerLink]="['/restaurants', restaurant._id]">
+                <div class="home-restaurant-media">
+                  @if (restaurant.imageUrl) {
+                    <img [src]="restaurant.imageUrl" [alt]="restaurant.nom" />
+                  } @else {
+                    <div class="home-image-placeholder" role="img" aria-label="Image du restaurant non disponible">
+                      <svg viewBox="0 0 48 48" aria-hidden="true">
+                        <circle cx="24" cy="24" r="17"></circle>
+                        <circle cx="24" cy="24" r="11"></circle>
+                      </svg>
+                    </div>
+                  }
+                  <span class="home-restaurant-status" [class.is-open]="restaurant.isOpen">
+                    {{ restaurant.isOpen ? 'Ouvert' : 'Fermé' }}
+                  </span>
+                </div>
+                <div class="home-restaurant-card-body">
+                  <h3>{{ restaurant.nom }}</h3>
+                  <span class="home-restaurant-cuisine">{{ restaurant.cuisineType }}</span>
+                  <p>{{ restaurant.description }}</p>
+                  <span class="home-restaurant-delivery">Livraison : {{ restaurant.deliveryFee }} DT</span>
+                  <span class="home-restaurant-link-label">Voir le restaurant <span aria-hidden="true">→</span></span>
+                </div>
+              </a>
+            }
+          </div>
+        } @else {
+          <p class="home-featured-empty">Aucun restaurant disponible pour le moment.</p>
+        }
+      </section>
+
+      <section class="home-partner-cta" aria-labelledby="home-partner-title">
+        <div>
+          <span class="home-eyebrow">Espace restaurateurs &amp; artisans</span>
+          <h2 id="home-partner-title">Vous êtes un artisan ou un restaurateur engagé ?</h2>
+          <p>Rejoignez FoodExpress et faites découvrir votre savoir-faire aux gourmets de votre quartier.</p>
+        </div>
+        <a class="fe-btn fe-btn-primary" routerLink="/register" [queryParams]="{ role: 'restaurateur' }">Devenir partenaire</a>
+      </section>
+    </div>
   </main>
 </app-shell>

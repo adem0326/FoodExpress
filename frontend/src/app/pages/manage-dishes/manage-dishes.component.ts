@@ -1,16 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { DecimalPipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AppShellComponent } from '../../shared/app-shell.component';
-import { Dish, DishCategory, DISH_CATEGORIES } from '../../models/dish.models';
+import { Dish, DishCategory, DishRequest, DISH_CATEGORIES } from '../../models/dish.models';
 import { Restaurant } from '../../models/restaurant.models';
 import { DishesService } from '../../services/dishes.service';
 
 @Component({
   selector: 'app-manage-dishes',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, AppShellComponent],
+  imports: [DecimalPipe, ReactiveFormsModule, RouterLink, AppShellComponent],
   templateUrl: './manage-dishes.component.html',
   styleUrl: './manage-dishes.component.css'
 })
@@ -21,6 +22,10 @@ export class ManageDishesComponent implements OnInit {
   readonly restaurantId = signal('');
   readonly restaurant = signal<Restaurant | null>(null);
   readonly dishes = signal<Dish[]>([]);
+  readonly selectedCategory = signal<DishCategory | 'Tous'>('Tous');
+  readonly searchTerm = signal('');
+  readonly availabilityFilter = signal<'all' | 'available' | 'unavailable'>('all');
+  readonly showDishForm = signal(false);
   readonly isLoading = signal(true);
   readonly isSaving = signal(false);
   readonly editingId = signal('');
@@ -58,6 +63,7 @@ export class ManageDishesComponent implements OnInit {
 
   editDish(dish: Dish): void {
     this.editingId.set(dish._id);
+    this.showDishForm.set(true);
     this.dishForm.reset({
       nom: dish.nom,
       imageUrl: dish.imageUrl,
@@ -70,6 +76,7 @@ export class ManageDishesComponent implements OnInit {
 
   cancelEdit(): void {
     this.editingId.set('');
+    this.showDishForm.set(false);
     this.dishForm.reset({
       nom: '',
       imageUrl: '',
@@ -77,6 +84,90 @@ export class ManageDishesComponent implements OnInit {
       prix: 0,
       categorie: 'Entrées',
       disponible: true
+    });
+  }
+
+  startNewDish(): void {
+    this.editingId.set('');
+    this.showDishForm.set(true);
+    this.dishForm.reset({
+      nom: '',
+      imageUrl: '',
+      description: '',
+      prix: 0,
+      categorie: 'Entrées',
+      disponible: true
+    });
+  }
+
+  categoryCount(category: DishCategory | 'Tous'): number {
+    return category === 'Tous'
+      ? this.dishes().length
+      : this.dishes().filter((dish) => dish.categorie === category).length;
+  }
+
+  availableDishesCount(): number {
+    return this.dishes().filter((dish) => dish.disponible).length;
+  }
+
+  unavailableDishesCount(): number {
+    return this.dishes().filter((dish) => !dish.disponible).length;
+  }
+
+  filteredDishes(): Dish[] {
+    const category = this.selectedCategory();
+    const search = this.searchTerm().trim().toLocaleLowerCase();
+    const availability = this.availabilityFilter();
+
+    return this.dishes().filter((dish) =>
+      (category === 'Tous' || dish.categorie === category)
+      && (!search || `${dish.nom} ${dish.description}`.toLocaleLowerCase().includes(search))
+      && (availability === 'all'
+        || (availability === 'available' && dish.disponible)
+        || (availability === 'unavailable' && !dish.disponible))
+    );
+  }
+
+  setSearchTerm(event: Event): void {
+    const target = event.target;
+    if (target instanceof HTMLInputElement) {
+      this.searchTerm.set(target.value);
+    }
+  }
+
+  setAvailabilityFilter(event: Event): void {
+    const target = event.target;
+    if (!(target instanceof HTMLSelectElement)) return;
+
+    if (target.value === 'all' || target.value === 'available' || target.value === 'unavailable') {
+      this.availabilityFilter.set(target.value);
+    }
+  }
+
+  toggleAvailability(dish: Dish): void {
+    if (this.isSaving()) return;
+
+    const request: DishRequest = {
+      nom: dish.nom,
+      imageUrl: dish.imageUrl,
+      description: dish.description,
+      prix: dish.prix,
+      categorie: dish.categorie,
+      disponible: !dish.disponible
+    };
+    this.successMessage.set('');
+    this.errorMessage.set('');
+    this.isSaving.set(true);
+    this.dishesService.update(this.restaurantId(), dish._id, request).subscribe({
+      next: ({ message }) => {
+        this.successMessage.set(message);
+        this.isSaving.set(false);
+        this.loadMenu();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.errorMessage.set(error.error?.message || 'Impossible de modifier la disponibilité');
+        this.isSaving.set(false);
+      }
     });
   }
 

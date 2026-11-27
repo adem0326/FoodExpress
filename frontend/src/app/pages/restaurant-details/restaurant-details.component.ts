@@ -8,7 +8,7 @@ import { DecimalPipe } from '@angular/common';
 import { RestaurantsService } from '../../services/restaurants.service';
 // Charge le type Restaurant.
 import { Restaurant } from '../../models/restaurant.models';
-import { Dish, DISH_CATEGORIES } from '../../models/dish.models';
+import { Dish, DISH_CATEGORIES, DishCategory } from '../../models/dish.models';
 import { DishesService } from '../../services/dishes.service';
 import { CartService } from '../../services/cart.service';
 // Charge la structure commune.
@@ -33,6 +33,7 @@ export class RestaurantDetailsComponent implements OnInit {
   readonly restaurant = signal<Restaurant | null>(null);
   readonly dishes = signal<Dish[]>([]);
   readonly dishCategories = DISH_CATEGORIES;
+  readonly activeDishCategory = signal<DishCategory | null>(null);
   readonly isMenuLoading = signal(false);
   readonly menuErrorMessage = signal('');
   readonly cartMessage = signal('');
@@ -73,6 +74,16 @@ export class RestaurantDetailsComponent implements OnInit {
   dishesForCategory(category: string): Dish[] {
     return this.dishes().filter((dish) => dish.categorie === category);
   }
+
+  visibleDishes(): Dish[] {
+    const category = this.activeDishCategory();
+    return category ? this.dishesForCategory(category) : this.dishes();
+  }
+
+  selectDishCategory(category: DishCategory | null): void {
+    this.activeDishCategory.set(category);
+  }
+
   addToCart(dish: Dish): void {
     const restaurant = this.restaurant();
     if (!restaurant) return;

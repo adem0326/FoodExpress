@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 import { CartService } from '../services/cart.service';
@@ -14,7 +14,9 @@ import { CartService } from '../services/cart.service';
       <header class="fe-header">
         <div class="fe-header-inner">
           <a class="fe-brand" routerLink="/home" aria-label="FoodExpress">
-            <span class="fe-brand-mark" aria-hidden="true">FE</span>
+            <span class="fe-brand-mark" aria-hidden="true">
+              <img src="/foodexpress-favicon.png" alt="" />
+            </span>
             <span class="fe-brand-name">FoodExpress</span>
           </a>
           <nav class="fe-header-nav" aria-label="Navigation principale">
@@ -29,10 +31,15 @@ import { CartService } from '../services/cart.service';
           </nav>
 
           @if (auth.currentUser(); as user) {
-            <a class="fe-header-user" [routerLink]="homeRoute()" aria-label="Ouvrir mon tableau de bord">
-              <span class="fe-user-avatar" aria-hidden="true">{{ (user.prenom || '').charAt(0) }}{{ (user.nom || '').charAt(0) }}</span>
-              <span class="fe-user-name">{{ user.prenom }} {{ user.nom }}</span>
-            </a>
+            <div class="fe-header-account">
+              <a class="fe-header-user" routerLink="/profile" aria-label="Ouvrir mon profil">
+                <span class="fe-user-avatar" aria-hidden="true">{{ (user.prenom || '').charAt(0) }}{{ (user.nom || '').charAt(0) }}</span>
+                <span class="fe-user-name">{{ user.prenom }} {{ user.nom }}</span>
+              </a>
+              <button type="button" class="fe-logout-button" aria-label="Se déconnecter" (click)="logout()">
+                <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+              </button>
+            </div>
           }
         </div>
       </header>
@@ -93,6 +100,39 @@ import { CartService } from '../services/cart.service';
       background: var(--fe-surface-container);
     }
 
+    .fe-header-account {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fe-logout-button {
+      display: inline-flex;
+      width: 44px;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--cinnamon);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--cinnamon);
+      font: 700 13px 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .fe-logout-button:hover {
+      background: var(--cinnamon);
+      color: #fff;
+    }
+
+    .fe-logout-button:focus-visible {
+      outline: 2px solid var(--cinnamon);
+      outline-offset: 3px;
+    }
+
     @media (max-width: 600px) {
       .fe-header-nav {
         gap: 4px;
@@ -102,16 +142,20 @@ import { CartService } from '../services/cart.service';
         padding-inline: 10px;
         font-size: var(--fe-label-sm-size);
       }
+
+      .fe-header-account {
+        gap: 4px;
+      }
     }
   `]
 })
 export class AppShellComponent {
   readonly auth = inject(AuthService);
-
   readonly cart = inject(CartService);
+  private readonly router = inject(Router);
 
-
-  homeRoute(): string {
-    return this.auth.getHomeRoute();
+  logout(): void {
+    this.auth.logout();
+    void this.router.navigate(['/login']);
   }
 }

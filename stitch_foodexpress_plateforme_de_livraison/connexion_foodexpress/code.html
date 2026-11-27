@@ -107,22 +107,22 @@
 </script></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container min-h-screen flex flex-col justify-between"><header class="w-full py-space-md px-margin flex items-center justify-between"><a class="flex items-center gap-space-xs" data-path="explorer" href="#"><img alt="FoodExpress Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0zbbpYdaeVCA9YfhkHssIszFbYYDNyiIMO30OOIsbiehKcvcm4qlUpvF9s2-9UGZnRdf1n9rJa0M1ZdRlZntAlrwnnntSk1znlTUpUPxXE2q6je-absQseBN4eWbyyvPSYbf_piXQE81QnbU2IPDe32ni584SF04VsOUiPWiUmLNnJz3016OUrpkeYd0Wquk7DvF8I7O3XdnSdoZ78WWxVuiChfCZq-1MWz58ig"/><span class="font-headline-sm text-headline-sm text-primary tracking-tight">FoodExpress</span></a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" data-path="explorer" href="#"><span class="material-symbols-outlined text-[18px]">arrow_back</span> Retour au catalogue</a></header><main class="w-full flex-1 flex flex-col items-center justify-center p-space-md"><div class="flex flex-col w-full">
 <div class="w-full max-w-7xl mx-auto px-margin-sm md:px-gutter py-space-sm md:py-space-md">
 <div class="grid grid-cols-1 lg:grid-cols-12 rounded-xl overflow-hidden bg-surface-container-lowest shadow-xl border border-surface-container">
-<!-- Left Column / Auth Card Section -->
+<!-- Panneau principal de connexion : contient les champs et les actions du compte. -->
 <section class="lg:col-span-6 xl:col-span-5 p-space-md sm:p-space-lg md:p-space-xl flex flex-col justify-between bg-surface-container-lowest relative z-10">
 <div class="w-full max-w-md mx-auto">
-<!-- Identity & Sub-badge -->
+<!-- Identité FoodExpress et repère visuel sur les produits locaux. -->
 <div class="flex items-center gap-space-xs mb-space-sm">
 <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-surface-container-highest text-primary">
 <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">eco</span>
 </span>
 <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest font-semibold">Saveurs locales &amp; circuits courts</span>
 </div>
-<!-- Main Title & Prompt -->
+<!-- Titre et explication de l'accès au compte. -->
 <div class="mb-space-md">
 <h1 class="font-headline-md text-headline-md text-primary tracking-tight mb-space-xs">Bon retour parmi nous</h1>
 <p class="font-body-md text-body-md text-on-surface-variant">Connectez-vous pour retrouver vos restaurants favoris, vos commandes et vos avantages exclusifs.</p>
 </div>
-<!-- Profile Type Tabs -->
+<!-- Choix du profil : le script met à jour l'onglet actif et le libellé du bouton. -->
 <div aria-label="Type de compte" class="flex p-1 rounded-lg bg-surface-container mb-space-md" role="tablist">
 <button class="role-tab flex-1 py-2 px-space-xs rounded-lg font-label-lg text-label-lg text-center transition-all bg-primary text-on-primary shadow-sm" data-role="client" type="button">
               Client
@@ -134,7 +134,7 @@
               Livreur
             </button>
 </div>
-<!-- Social Quick Sign-In -->
+<!-- Présentation des options de connexion rapide avec Google et Apple. -->
 <div class="grid grid-cols-2 gap-space-sm mb-space-md">
 <button class="w-full flex items-center justify-center gap-space-xs py-2.5 px-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 text-on-surface font-label-lg text-label-lg transition-colors group" type="button">
 <svg class="w-4 h-4 shrink-0" viewbox="0 0 24 24">
@@ -152,14 +152,14 @@
 <span>Apple</span>
 </button>
 </div>
-<!-- Divider -->
+<!-- Séparateur entre les options rapides et la connexion par e-mail. -->
 <div class="relative flex items-center justify-center my-space-md">
 <div class="w-full h-px bg-surface-container-high"></div>
 <span class="absolute px-space-sm bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">ou avec votre adresse e-mail</span>
 </div>
-<!-- Interactive Form -->
+<!-- Formulaire de connexion : empêche ici le rechargement natif de la page. -->
 <form class="space-y-space-md" id="loginForm" onsubmit="event.preventDefault(); return false;">
-<!-- Email Field -->
+<!-- Champ e-mail avec validation native du navigateur. -->
 <div>
 <label class="block font-label-lg text-label-lg text-on-surface mb-1.5" for="email">Adresse e-mail</label>
 <div class="relative rounded-lg bg-surface-container-low border border-outline-variant/50 focus-within:bg-surface-container-lowest focus-within:border-primary transition-colors">
@@ -169,7 +169,7 @@
 <input class="w-full pl-10 pr-3 py-2.5 rounded-lg bg-transparent text-on-surface font-body-md text-body-md placeholder:text-on-surface-variant/50 focus:outline-none" id="email" placeholder="votre.email@exemple.fr" required="" type="email"/>
 </div>
 </div>
-<!-- Password Field -->
+<!-- Champ mot de passe, lien de récupération et bouton d'affichage/masquage. -->
 <div>
 <div class="flex items-center justify-between mb-1.5">
 <label class="block font-label-lg text-label-lg text-on-surface" for="password">Mot de passe</label>
@@ -185,27 +185,27 @@
 </button>
 </div>
 </div>
-<!-- Remember me & Status -->
+<!-- Option de mémorisation de session présentée à l'utilisateur. -->
 <div class="flex items-center justify-between pt-1">
 <label class="flex items-center gap-2 cursor-pointer select-none">
 <input class="w-4 h-4 rounded text-primary bg-surface-container-low border-outline-variant focus:ring-primary focus:ring-offset-0" id="rememberMe" type="checkbox"/>
 <span class="font-body-sm text-body-sm text-on-surface-variant">Se souvenir de moi pendant 30 jours</span>
 </label>
 </div>
-<!-- Submit CTA -->
+<!-- Action principale de soumission du formulaire. -->
 <button class="w-full py-3 px-space-md rounded-lg bg-primary hover:bg-secondary text-on-primary font-label-lg text-label-lg shadow-md transition-all duration-200 transform active:scale-[0.99] flex items-center justify-center gap-space-xs" id="submitBtn" type="submit">
 <span id="btnText">Se connecter à FoodExpress</span>
 <span class="material-symbols-outlined text-[18px]" id="btnIcon">arrow_forward</span>
 </button>
 </form>
-<!-- Sign Up Footnote -->
+<!-- Raccourci vers la création d'un compte. -->
 <div class="text-center mt-space-md">
 <p class="font-body-md text-body-md text-on-surface-variant">
               Pas encore de compte ?
               <a class="font-label-lg text-label-lg text-secondary hover:text-primary transition-colors underline decoration-secondary/30 underline-offset-4" href="#">Créer un compte gratuitement</a>
 </p>
 </div>
-<!-- Reassurance Footer Links -->
+<!-- Liens d'information et d'assistance liés au compte. -->
 <div class="mt-space-lg pt-space-md flex flex-wrap items-center justify-center gap-x-space-md gap-y-2 text-on-surface-variant font-label-sm text-label-sm">
 <a class="hover:text-on-surface transition-colors" href="#">Mentions légales</a>
 <span class="text-surface-container-highest">•</span>
@@ -215,13 +215,13 @@
 </div>
 </div>
 </section>
-<!-- Right Column / Botanical Epicure Atmospheric Showcase -->
+<!-- Panneau visuel complémentaire, masqué sur les petits écrans. -->
 <section class="hidden lg:flex lg:col-span-6 xl:col-span-7 relative p-space-lg xl:p-space-xl flex-col justify-between overflow-hidden">
-<!-- Background Imagery with Botanical Gradient Scrim -->
+<!-- Photo d'ambiance et superpositions de dégradés pour garder le texte lisible. -->
 <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105" data-alt="Warm natural daylight illuminating an artisanal gourmet dish featuring roasted heirloom carrots, leafy chlorophyll greens, burrata, and toasted seeds served on a handcrafted ceramic plate with raw linen texture in an organic Parisian bistro setting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCUOaa2hk2KRgbeAdf7yoqKf0_3D9RFaWdQf96igvrURUv5QbMo-07wA_Nn2LHxd2ZHYPRFelGJL-WQzJsnyKLXyKsvOBfAzW6CihR5Qlw6pilPjU3BAE-CnsrNUOcM5P5LtUnODG3Ec1d74cvGPxZSE87UppioV1JrRIYXlgENCGb_AGCODqXXnepkSgG0KjQOHRkmESvmtEfEVDZxzXfxGatsFG9LdgNF04bYMA')"></div>
 <div class="absolute inset-0 bg-gradient-to-t from-on-surface/90 via-primary/50 to-primary/20"></div>
 <div class="absolute inset-0 bg-gradient-to-r from-primary/40 to-transparent mix-blend-multiply"></div>
-<!-- Top Shelf Status & Badges -->
+<!-- Badges d'ambiance : engagement local et disponibilité des cuisines. -->
 <div class="relative z-10 flex items-center justify-between gap-space-sm">
 <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full bg-surface-container-lowest/95 backdrop-blur text-primary font-label-sm text-label-sm shadow-sm border border-surface-container">
 <span class="material-symbols-outlined text-[16px] text-secondary" style="font-variation-settings: 'FILL' 1;">compost</span>
@@ -232,7 +232,7 @@
 <span class="font-label-sm text-label-sm font-medium">Cuisines ouvertes</span>
 </div>
 </div>
-<!-- Center Quote / Sensory Highlight -->
+<!-- Mise en avant éditoriale de la promesse culinaire. -->
 <div class="relative z-10 my-auto max-w-lg">
 <p class="font-display-md text-display-md text-surface font-semibold leading-tight mb-space-xs text-balance">
             « Goûter la terre, honorer le temps des saisons. »
@@ -241,9 +241,9 @@
             Une sélection rigoureuse de plus de 45 fermes périurbaines et ateliers culinaires passionnés livrés chez vous avec une empreinte minimale.
           </p>
 </div>
-<!-- Floating Testimonial & Metric Bento Cards -->
+<!-- Cartes de réassurance présentant la livraison et le réseau de partenaires. -->
 <div class="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-space-sm pt-space-md">
-<!-- Delivery Guarantee Pill Card -->
+<!-- Indication du délai moyen et du mode de livraison. -->
 <div class="p-space-md rounded-xl bg-surface-container-lowest/95 backdrop-blur shadow-md flex items-center gap-space-sm border border-surface-container">
 <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary shrink-0">
 <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">electric_moped</span>
@@ -253,13 +253,13 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant">Livraison douce &amp; isotherme</p>
 </div>
 </div>
-<!-- Chef & Terroir Network Card -->
+<!-- Chiffres de mise en valeur du réseau de chefs et producteurs. -->
 <div class="p-space-md rounded-xl bg-surface-container-lowest/95 backdrop-blur shadow-md flex items-center justify-between border border-surface-container">
 <div>
 <p class="font-headline-sm text-[16px] leading-tight text-primary">100% Frais &amp; de saison</p>
 <p class="font-body-sm text-body-sm text-on-surface-variant">98 Chefs engagés</p>
 </div>
-<!-- Stacked Avatars Representation -->
+<!-- Avatars décoratifs représentant les membres du réseau. -->
 <div class="flex -space-x-2 shrink-0">
 <div class="w-7 h-7 rounded-full bg-surface-container-high overflow-hidden shadow-sm">
 <img class="w-full h-full object-cover" data-alt="Portrait of an artisanal female head chef smiling warmly in a rustic kitchen apron." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGUgQWDBT8F8LKqxha0o1HlnWAJ-L-Zy9UMoXo10oaaM6eQXpEa-PjaodV3DKb6EXowmE8YKipGtZviHjrz34agG4xC6DqEb1DtcRvxnd-j-wcydHiRsFVDig4qhFMeQszIGffYUnmZWPEdYcUqcV2Kk2zFo2U_PyJ9Ys2Wg5Y1qFvxep7ktG_iDkCh47MHgBfnnrlfKYqvnwCy-ofaRnNokt0C7hBFYQWop_pPg"/>
@@ -276,10 +276,10 @@
 </section>
 </div>
 </div>
-<!-- Micro-interactions Script -->
+<!-- Interactions de démonstration de la maquette : visibilité, onglets et retour de soumission. -->
 <script>
     (function() {
-      // Toggle Password Visibility
+      // Affiche ou masque le mot de passe et adapte l'icône du bouton.
       const togglePasswordBtn = document.getElementById('togglePassword');
       const passwordInput = document.getElementById('password');
       const passwordIcon = document.getElementById('passwordIcon');
@@ -292,7 +292,7 @@
         });
       }
 
-      // Profile Switch Tabs Interaction
+      // Met à jour l'onglet visuellement actif et adapte le texte du bouton au profil choisi.
       const tabs = document.querySelectorAll('.role-tab');
       const btnText = document.getElementById('btnText');
 
@@ -318,7 +318,7 @@
         });
       });
 
-      // Submit feedback simulation
+      // Simule un retour de soumission; cette animation ne réalise pas d'authentification.
       const form = document.getElementById('loginForm');
       const submitBtn = document.getElementById('submitBtn');
       const btnIcon = document.getElementById('btnIcon');

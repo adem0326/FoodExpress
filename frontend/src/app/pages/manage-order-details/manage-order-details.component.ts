@@ -11,92 +11,172 @@ import { AppShellComponent } from '../../shared/app-shell.component';
   imports: [DatePipe, DecimalPipe, RouterLink, AppShellComponent],
   template: `
     <app-shell>
-      <main class="fe-page order-page">
+      <main class="fe-container fe-page restaurant-order-detail-page">
         @if (errorMessage()) {
           <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
         }
         @if (order(); as order) {
-          <header class="order-header">
-            <div>
-              <h1>Commande de {{ clientName() }}</h1>
-              <span class="fe-muted">Reçue le {{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
-              @if (clientPhone()) {
-                <span class="fe-muted"> · Tél. {{ clientPhone() }}</span>
-              }
+          <header class="order-detail-header">
+            <div class="order-detail-heading">
+              <a class="order-detail-back" routerLink="/restaurateur/orders">
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+                Retour aux commandes
+              </a>
+              <span class="order-detail-kicker">Commande #{{ order._id.slice(-6) }}</span>
+              <h1>Détail de la commande</h1>
+              <p>Reçue le {{ order.createdAt | date:'dd/MM/yyyy à HH:mm' }}</p>
             </div>
-            <span [class]="'status status-' + order.statut">{{ labels[order.statut] }}</span>
+            <div class="order-detail-header-meta">
+              <span [class]="'order-detail-status status-' + order.statut">
+                <span class="order-detail-status-dot" aria-hidden="true"></span>
+                {{ labels[order.statut] }}
+              </span>
+              <div class="order-detail-client-chip">
+                <span class="order-detail-client-avatar" aria-hidden="true">{{ clientName().slice(0, 1).toUpperCase() }}</span>
+                <div>
+                  <strong>{{ clientName() }}</strong>
+                  @if (clientPhone()) {
+                    <span>{{ clientPhone() }}</span>
+                  } @else {
+                    <span>Client FoodExpress</span>
+                  }
+                </div>
+              </div>
+            </div>
           </header>
 
-          <section class="order-box" aria-label="Articles">
-            <table>
-              <thead><tr><th>Article</th><th>Qté</th><th>Prix unitaire</th><th>Total</th></tr></thead>
-              <tbody>
+          <div class="order-detail-layout">
+            <div class="order-detail-main">
+              <section class="order-detail-card" aria-labelledby="order-items-title">
+                <header class="order-detail-card-heading">
+                  <div class="order-detail-heading-icon">
+                    <span class="material-symbols-outlined" aria-hidden="true">restaurant_menu</span>
+                  </div>
+                  <div>
+                    <h2 id="order-items-title">Articles commandés</h2>
+                    <p>{{ order.articles.length }} article(s) dans cette commande</p>
+                  </div>
+                </header>
+                <div class="order-detail-items">
                 @for (item of order.articles; track item.plat) {
-                  <tr>
-                    <td>{{ item.nom }}</td>
-                    <td>{{ item.quantite }}</td>
-                    <td>{{ item.prixUnitaire | number:'1.2-2' }} DT</td>
-                    <td>{{ item.prixUnitaire * item.quantite | number:'1.2-2' }} DT</td>
-                  </tr>
+                  <article class="order-detail-item">
+                    <span class="order-detail-item-icon" aria-hidden="true">
+                      <span class="material-symbols-outlined">lunch_dining</span>
+                    </span>
+                    <div class="order-detail-item-copy">
+                      <h3>{{ item.nom }}</h3>
+                      <span>{{ item.quantite }} × {{ item.prixUnitaire | number:'1.2-2' }} DT</span>
+                    </div>
+                    <strong>{{ item.prixUnitaire * item.quantite | number:'1.2-2' }} DT</strong>
+                  </article>
                 }
-              </tbody>
-            </table>
-            <div class="order-totals">
-              <div><span>Sous-total</span><strong>{{ order.sousTotal | number:'1.2-2' }} DT</strong></div>
-              <div><span>Livraison</span><strong>{{ order.fraisLivraison | number:'1.2-2' }} DT</strong></div>
-              <div class="order-total"><span>Total</span><strong>{{ order.total | number:'1.2-2' }} DT</strong></div>
+                </div>
+              </section>
+
+              <section class="order-detail-card order-delivery-card" aria-labelledby="delivery-title">
+                <header class="order-detail-card-heading">
+                  <div class="order-detail-heading-icon">
+                    <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                  </div>
+                  <div>
+                    <h2 id="delivery-title">Livraison</h2>
+                    <p>Informations nécessaires à la remise de la commande</p>
+                  </div>
+                </header>
+                <div class="order-detail-info-grid">
+                  <div>
+                    <span class="order-detail-info-label">Adresse de livraison</span>
+                    <strong>{{ order.adresseLivraison }}</strong>
+                  </div>
+                  <div>
+                    <span class="order-detail-info-label">Mode de paiement</span>
+                    <strong>
+                      <span class="material-symbols-outlined" aria-hidden="true">payments</span>
+                      Paiement à la livraison
+                    </strong>
+                  </div>
+                  @if (clientPhone()) {
+                    <div>
+                      <span class="order-detail-info-label">Téléphone du client</span>
+                      <strong>
+                        <span class="material-symbols-outlined" aria-hidden="true">call</span>
+                        {{ clientPhone() }}
+                      </strong>
+                    </div>
+                  }
+                </div>
+                @if (order.remarque) {
+                  <div class="order-customer-note">
+                    <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+                    <div>
+                      <span class="order-detail-info-label">Note du client</span>
+                      <p>{{ order.remarque }}</p>
+                    </div>
+                  </div>
+                }
+              </section>
             </div>
-          </section>
 
-          <section class="order-box">
-            <p><strong>Adresse de livraison :</strong> {{ order.adresseLivraison }}</p>
-            @if (order.remarque) {
-              <p><strong>Remarque :</strong> {{ order.remarque }}</p>
-            }
-            <p><strong>Paiement :</strong> Paiement à la livraison</p>
-          </section>
+            <aside class="order-detail-sidebar">
+              <section class="order-detail-card order-totals-card" aria-labelledby="order-total-title">
+                <header class="order-detail-card-heading">
+                  <div class="order-detail-heading-icon">
+                    <span class="material-symbols-outlined" aria-hidden="true">receipt_long</span>
+                  </div>
+                  <div>
+                    <h2 id="order-total-title">Récapitulatif</h2>
+                    <p>Montant de la commande</p>
+                  </div>
+                </header>
+                <div class="order-totals">
+                  <div><span>Sous-total</span><strong>{{ order.sousTotal | number:'1.2-2' }} DT</strong></div>
+                  <div><span>Frais de livraison</span><strong>{{ order.fraisLivraison | number:'1.2-2' }} DT</strong></div>
+                  <div class="order-grand-total"><span>Total</span><strong>{{ order.total | number:'1.2-2' }} <small>DT</small></strong></div>
+                </div>
+              </section>
 
-          <div class="order-actions">
-            @for (action of actions(); track action.statut) {
-              <button type="button" class="fe-btn" [class.fe-btn-secondary]="action.danger" [disabled]="isBusy()" (click)="change(action.statut)">
-                {{ action.label }}
-              </button>
-            }
-            @if (!actions().length) {
-              <span class="fe-muted">Cette commande est terminée et ne peut plus être modifiée.</span>
-            }
+              <section class="order-detail-card order-management-card" aria-labelledby="order-actions-title">
+                <header class="order-detail-card-heading">
+                  <div class="order-detail-heading-icon">
+                    <span class="material-symbols-outlined" aria-hidden="true">task_alt</span>
+                  </div>
+                  <div>
+                    <h2 id="order-actions-title">Suivi de la commande</h2>
+                    <p>Statut actuel : {{ labels[order.statut] }}</p>
+                  </div>
+                </header>
+                <div class="order-management-actions">
+                  @for (action of actions(); track action.statut) {
+                    <button
+                      type="button"
+                      class="fe-btn"
+                      [class.fe-btn-primary]="!action.danger"
+                      [class.fe-btn-secondary]="action.danger"
+                      [disabled]="isBusy()"
+                      (click)="change(action.statut)">
+                      {{ action.label }}
+                    </button>
+                  }
+                  @if (!actions().length) {
+                    <p class="order-finished-message">
+                      <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
+                      Cette commande est terminée et ne peut plus être modifiée.
+                    </p>
+                  }
+                </div>
+              </section>
+            </aside>
           </div>
         } @else if (!errorMessage()) {
-          <p class="fe-muted" role="status">Chargement de la commande…</p>
+          <section class="order-detail-loading" role="status">
+            <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
+            Chargement de la commande…
+          </section>
         }
-
-        <div class="order-actions">
-          <a class="fe-btn fe-btn-secondary" routerLink="/restaurateur/orders">Retour aux commandes</a>
-        </div>
       </main>
     </app-shell>
   `,
-  styles: [`
-    :host { display: block; }
-    .order-page { display: flex; flex-direction: column; gap: 20px; }
-    .order-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-    .order-header h1 { margin: 0 0 4px; }
-    .status { padding: 4px 12px; border-radius: 999px; font-size: 0.85rem; white-space: nowrap; background: var(--fe-surface-container); }
-    .status-en_attente { background: #fbe9c3; color: #7a5600; }
-    .status-acceptee { background: #d5e8f7; color: #1f5a8a; }
-    .status-en_preparation { background: #dde3f7; color: #2d3f8a; }
-    .status-en_livraison { background: #e8dcf5; color: #5a2d8a; }
-    .status-livree { background: #dcefd6; color: #2f6b28; }
-    .status-annulee { background: var(--fe-error-container); color: var(--fe-on-error-container); }
-    .order-box { padding: 20px; border: 1px solid var(--fe-card-border); border-radius: 14px; background: var(--fe-surface-container-lowest); overflow-x: auto; }
-    .order-box table { width: 100%; border-collapse: collapse; }
-    .order-box th, .order-box td { padding: 8px; text-align: left; border-bottom: 1px solid var(--fe-card-border); }
-    .order-box p { margin: 0 0 8px; }
-    .order-totals { display: flex; flex-direction: column; gap: 6px; max-width: 320px; margin: 16px 0 0 auto; }
-    .order-totals > div { display: flex; justify-content: space-between; gap: 12px; }
-    .order-total { padding-top: 8px; border-top: 1px solid var(--fe-card-border); font-size: 1.1rem; }
-    .order-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-  `]
+  styles: [':host { display: block; }']
 })
 export class ManageOrderDetailsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

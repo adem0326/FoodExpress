@@ -4,6 +4,7 @@
       <div>
         <span class="fe-badge fe-badge-warm">Gestion des restaurants</span>
         <h1>{{ auth.getCurrentUser()?.role === 'admin' ? 'Administration des restaurants' : 'Mes restaurants' }}</h1>
+        <p>Suivez vos établissements et gérez leurs informations en un seul endroit.</p>
       </div>
       <a class="fe-btn fe-btn-secondary" [routerLink]="auth.getHomeRoute()">Retour au tableau de bord</a>
     </header>
@@ -72,65 +73,76 @@
 
 
 
-    <section class="manage-card" aria-label="Liste des restaurants">
+    <section class="manage-card restaurant-list-card" aria-label="Liste des restaurants">
+      <header class="restaurant-list-heading">
+        <div>
+          <h2>{{ auth.getCurrentUser()?.role === 'admin' ? 'Tous les restaurants' : 'Mes établissements' }}</h2>
+          <p>Les informations et actions de chaque établissement.</p>
+        </div>
+        <span class="restaurant-count">{{ restaurants().length }} restaurant(s)</span>
+      </header>
       @if (isLoading()) {
-      <p class="fe-muted" role="status">Chargement des restaurants…</p>
+        <p class="fe-muted" role="status">Chargement des restaurants…</p>
       } @else if (restaurants().length) {
-      <div class="manage-table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Nom</th>
-              <th>Cuisine</th>
-              <th>Statut</th>
-              <th>Ouvert</th>
-              <th>Livraison</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (restaurant of restaurants(); track restaurant._id) {
-            <tr>
-              <td>{{ restaurant.nom }}</td>
-              <td>{{ restaurant.cuisineType }}</td>
-              <td>
+        <div class="restaurant-manage-grid">
+          @for (restaurant of restaurants(); track restaurant._id) {
+            <article class="restaurant-manage-card">
+              <div class="restaurant-manage-cover">
+                @if (restaurant.imageUrl) {
+                  <img [src]="restaurant.imageUrl" [alt]="restaurant.nom" />
+                } @else {
+                  <div class="restaurant-manage-placeholder" role="img" [attr.aria-label]="'Image non disponible pour ' + restaurant.nom">
+                    <svg viewBox="0 0 48 48" aria-hidden="true">
+                      <circle cx="24" cy="24" r="17"></circle>
+                      <circle cx="24" cy="24" r="11"></circle>
+                    </svg>
+                  </div>
+                }
                 <span class="manage-status" [class.approved]="restaurant.status === 'approved'"
                   [class.suspended]="restaurant.status === 'suspended'">
-                  {{ restaurant.status === 'approved' ? 'Validé' : restaurant.status === 'suspended' ? 'Suspendu' : 'En
-                  attente' }}
+                  {{ restaurant.status === 'approved' ? 'Validé' : restaurant.status === 'suspended' ? 'Suspendu' : 'En attente' }}
                 </span>
-              </td>
-              <td>{{ restaurant.isOpen ? 'Oui' : 'Non' }}</td>
-              <td>{{ restaurant.deliveryFee }} DT</td>
-              <td>
+              </div>
+              <div class="restaurant-manage-content">
+                <div class="restaurant-manage-title-row">
+                  <div>
+                    <h3>{{ restaurant.nom }}</h3>
+                    <span class="restaurant-cuisine-chip">{{ restaurant.cuisineType }}</span>
+                  </div>
+                  <span class="restaurant-open-status" [class.is-open]="restaurant.isOpen">
+                    {{ restaurant.isOpen ? 'Ouvert' : 'Fermé' }}
+                  </span>
+                </div>
+                <p class="restaurant-manage-description">{{ restaurant.description }}</p>
+                <div class="restaurant-manage-meta">
+                  <span><span class="material-symbols-outlined" aria-hidden="true">location_on</span>{{ restaurant.adresse }}</span>
+                  <span><span class="material-symbols-outlined" aria-hidden="true">delivery_dining</span>{{ restaurant.deliveryFee }} DT de livraison</span>
+                </div>
                 <div class="manage-actions">
-                  <button type="button" class="fe-btn fe-btn-secondary"
-                    (click)="editRestaurant(restaurant)">Modifier</button>
-                  <button type="button" class="fe-btn fe-btn-secondary is-danger"
-                    (click)="deleteRestaurant(restaurant)">Supprimer</button>
+                  <button type="button" class="fe-btn fe-btn-secondary" (click)="editRestaurant(restaurant)">Modifier</button>
+                  <button type="button" class="fe-btn fe-btn-secondary is-danger" (click)="deleteRestaurant(restaurant)">Supprimer</button>
                   @if (auth.getCurrentUser()?.role === 'restaurateur') {
-                  <a class="fe-btn fe-btn-secondary"
-                    [routerLink]="['/restaurateur/restaurants', restaurant._id, 'menu']">Gérer le menu</a>
+                    <a class="fe-btn fe-btn-primary" [routerLink]="['/restaurateur/restaurants', restaurant._id, 'menu']">Gérer le menu</a>
                   }
                   @if (auth.getCurrentUser()?.role === 'admin') {
-                  @if (restaurant.status !== 'approved') {
-                  <button type="button" class="fe-btn fe-btn-primary"
-                    (click)="changeStatus(restaurant, 'approved')">Valider</button>
-                  }
-                  @if (restaurant.status !== 'suspended') {
-                  <button type="button" class="fe-btn fe-btn-secondary"
-                    (click)="changeStatus(restaurant, 'suspended')">Suspendre</button>
-                  }
+                    @if (restaurant.status !== 'approved') {
+                      <button type="button" class="fe-btn fe-btn-primary" (click)="changeStatus(restaurant, 'approved')">Valider</button>
+                    }
+                    @if (restaurant.status !== 'suspended') {
+                      <button type="button" class="fe-btn fe-btn-secondary" (click)="changeStatus(restaurant, 'suspended')">Suspendre</button>
+                    }
                   }
                 </div>
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+              </div>
+            </article>
+          }
+        </div>
       } @else {
-      <p class="fe-muted">Aucun restaurant à afficher.</p>
+        <div class="restaurant-empty-state">
+          <span class="material-symbols-outlined" aria-hidden="true">storefront</span>
+          <h3>Aucun restaurant à afficher</h3>
+          <p>Vos établissements apparaîtront ici une fois enregistrés.</p>
+        </div>
       }
     </section>
   </main>

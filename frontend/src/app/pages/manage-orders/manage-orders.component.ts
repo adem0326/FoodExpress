@@ -18,20 +18,25 @@ import { AppShellComponent } from '../../shared/app-shell.component';
   imports: [DatePipe, DecimalPipe, FormsModule, RouterLink, AppShellComponent],
   template: `
     <app-shell>
-      <main class="fe-page orders-page">
-        <header class="orders-header">
-          <h1>Commandes reçues</h1>
-          <div class="orders-tools">
-            <label class="filter">
-              <span class="fe-muted">Statut</span>
-              <select [ngModel]="filter()" (ngModelChange)="onFilter($event)" name="filter">
-                <option value="">Tous</option>
-                @for (key of statusKeys; track key) {
-                  <option [value]="key">{{ labels[key] }}</option>
-                }
-              </select>
-            </label>
-            <button type="button" class="fe-btn fe-btn-secondary" (click)="load()" [disabled]="isLoading()">Actualiser</button>
+      <main class="fe-container fe-page restaurant-orders-page">
+        <header class="orders-hero">
+          <div>
+            <span class="fe-badge fe-badge-warm">
+              <span class="material-symbols-outlined" aria-hidden="true">restaurant</span>
+              Espace restaurateur
+            </span>
+            <h1>Gestion des commandes</h1>
+            <p>Suivez et traitez les commandes de vos clients depuis un seul endroit.</p>
+          </div>
+          <div class="orders-hero-actions">
+            <span class="orders-live-indicator">
+              <span aria-hidden="true"></span>
+              {{ orders().length }} commande(s) sur cette page
+            </span>
+            <button type="button" class="fe-btn fe-btn-secondary" (click)="load()" [disabled]="isLoading()">
+              <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+              {{ isLoading() ? 'Actualisation…' : 'Actualiser' }}
+            </button>
           </div>
         </header>
 
@@ -39,69 +44,134 @@ import { AppShellComponent } from '../../shared/app-shell.component';
           <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
         }
 
+        <section class="orders-toolbar" aria-label="Filtres des commandes">
+          <div class="orders-toolbar-copy">
+            <h2>Commandes reçues</h2>
+            <p>Consultez et filtrez les commandes de votre restaurant.</p>
+          </div>
+          <label class="orders-filter">
+            <span class="material-symbols-outlined" aria-hidden="true">filter_list</span>
+            <span>Filtrer par statut</span>
+            <select [ngModel]="filter()" (ngModelChange)="onFilter($event)" name="filter">
+              <option value="">Tous les statuts</option>
+              @for (key of statusKeys; track key) {
+                <option [value]="key">{{ labels[key] }}</option>
+              }
+            </select>
+          </label>
+        </section>
+
         @if (isLoading() && !orders().length) {
-          <p class="fe-muted" role="status">Chargement des commandes…</p>
+          <section class="orders-state" role="status">
+            <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
+            <p>Chargement des commandes…</p>
+          </section>
         } @else if (!orders().length) {
-          <p class="fe-muted">Aucune commande à afficher.</p>
+          <section class="orders-state">
+            <span class="material-symbols-outlined" aria-hidden="true">receipt_long</span>
+            <h2>Aucune commande à traiter</h2>
+            <p>Les nouvelles commandes apparaîtront ici.</p>
+          </section>
         } @else {
-          <section class="orders-list" aria-label="Commandes">
+          <section class="orders-panel" aria-label="Commandes reçues">
+            <div class="orders-list">
             @for (order of orders(); track order._id) {
-              <article class="order-card">
-                <div class="order-main">
-                  <h2>{{ clientName(order) }}</h2>
-                  <span class="fe-muted">{{ order.createdAt | date:'dd/MM/yyyy HH:mm' }} · {{ order.articles.length }} article(s)</span>
-                  <span class="fe-muted">{{ order.adresseLivraison }}</span>
+              <article class="restaurant-order-card">
+                <div class="order-card-top">
+                  <div class="order-id-block">
+                    <strong class="order-number">#{{ order._id.slice(-6) }}</strong>
+                    <span [class]="'orders-status status-' + order.statut">
+                      <span class="orders-status-dot" aria-hidden="true"></span>
+                      {{ labels[order.statut] }}
+                    </span>
+                  </div>
+                  <span class="order-date">{{ order.createdAt | date:'dd/MM/yyyy · HH:mm' }}</span>
                 </div>
-                <span [class]="'status status-' + order.statut">{{ labels[order.statut] }}</span>
-                <strong>{{ order.total | number:'1.2-2' }} DT</strong>
-                <div class="order-buttons">
-                  @for (action of actionsFor(order); track action.statut) {
+
+                <div class="order-card-content">
+                  <div class="order-customer">
+                    <span class="order-customer-avatar" aria-hidden="true">{{ clientName(order).slice(0, 1).toUpperCase() }}</span>
+                    <div>
+                      <h3>{{ clientName(order) }}</h3>
+                      <span>{{ order.articles.length }} article(s)</span>
+                    </div>
+                  </div>
+
+                  <div class="order-items" aria-label="Articles commandés">
+                    <span class="order-items-label">Récapitulatif du panier</span>
+                    @for (item of order.articles; track item.plat) {
+                      <div class="order-item">
+                        <span><strong>{{ item.quantite }} ×</strong> {{ item.nom }}</span>
+                        <span>{{ item.prixUnitaire * item.quantite | number:'1.2-2' }} DT</span>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="order-delivery-info">
+                    <span>
+                      <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                      {{ order.adresseLivraison }}
+                    </span>
+                    <span>
+                      <span class="material-symbols-outlined" aria-hidden="true">payments</span>
+                      Paiement à la livraison
+                    </span>
+                    @if (order.remarque) {
+                      <span class="order-note">
+                        <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+                        {{ order.remarque }}
+                      </span>
+                    }
+                  </div>
+
+                  <div class="order-total">
+                    <span>Total à encaisser</span>
+                    <strong>{{ order.total | number:'1.2-2' }} <small>DT</small></strong>
+                  </div>
+                </div>
+
+                <div class="order-card-actions">
+                  <div class="order-status-actions">
+                    @for (action of actionsFor(order); track action.statut) {
                     <button
                       type="button"
                       class="fe-btn"
+                      [class.fe-btn-primary]="!action.danger"
                       [class.fe-btn-secondary]="action.danger"
                       [disabled]="busyId() === order._id"
                       (click)="changeStatus(order, action.statut, action.label)">
                       {{ action.label }}
                     </button>
                   }
-                  <a class="fe-btn fe-btn-secondary" [routerLink]="['/restaurateur/orders', order._id]">Détails</a>
+                  </div>
+                  <a class="fe-btn fe-btn-secondary order-details-link" [routerLink]="['/restaurateur/orders', order._id]">
+                    <span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>
+                    Détails
+                  </a>
                 </div>
               </article>
             }
+            </div>
           </section>
 
-          <nav class="pager" aria-label="Pagination">
-            <button type="button" class="fe-btn fe-btn-secondary" (click)="goTo(page() - 1)" [disabled]="page() <= 1">Précédent</button>
-            <span class="fe-muted">Page {{ page() }} / {{ pages() }}</span>
-            <button type="button" class="fe-btn fe-btn-secondary" (click)="goTo(page() + 1)" [disabled]="page() >= pages()">Suivant</button>
+          <nav class="orders-pager" aria-label="Pagination des commandes">
+            <span>{{ orders().length }} commande(s) affichée(s) · Page {{ page() }} / {{ pages() }}</span>
+            <div>
+              <button type="button" class="fe-btn fe-btn-secondary" (click)="goTo(page() - 1)" [disabled]="page() <= 1">
+                <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+                Précédent
+              </button>
+              <button type="button" class="fe-btn fe-btn-secondary" (click)="goTo(page() + 1)" [disabled]="page() >= pages()">
+                Suivant
+                <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+              </button>
+            </div>
           </nav>
         }
       </main>
     </app-shell>
   `,
-  styles: [`
-    :host { display: block; }
-    .orders-page { display: flex; flex-direction: column; gap: 20px; }
-    .orders-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
-    .orders-header h1 { margin: 0; }
-    .orders-tools { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
-    .filter { display: flex; flex-direction: column; gap: 4px; }
-    .orders-list { display: flex; flex-direction: column; gap: 12px; }
-    .order-card { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; gap: 16px; padding: 16px; border: 1px solid var(--fe-card-border); border-radius: 14px; background: var(--fe-surface-container-lowest); }
-    .order-main { display: flex; flex-direction: column; gap: 2px; }
-    .order-main h2 { margin: 0; font-size: 1.1rem; }
-    .order-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
-    .status { padding: 4px 12px; border-radius: 999px; font-size: 0.85rem; white-space: nowrap; background: var(--fe-surface-container); }
-    .status-en_attente { background: #fbe9c3; color: #7a5600; }
-    .status-acceptee { background: #d5e8f7; color: #1f5a8a; }
-    .status-en_preparation { background: #dde3f7; color: #2d3f8a; }
-    .status-en_livraison { background: #e8dcf5; color: #5a2d8a; }
-    .status-livree { background: #dcefd6; color: #2f6b28; }
-    .status-annulee { background: var(--fe-error-container); color: var(--fe-on-error-container); }
-    .pager { display: flex; justify-content: center; align-items: center; gap: 16px; }
-    @media (max-width: 900px) { .order-card { grid-template-columns: 1fr auto; } .order-buttons { grid-column: 1 / -1; } }
-  `]
+  styles: [':host { display: block; }']
 })
 export class ManageOrdersComponent implements OnInit {
   private readonly ordersService = inject(OrdersService);

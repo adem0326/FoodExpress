@@ -74,6 +74,15 @@ export class AuthService {
 
   getHomeRoute(role = this.getCurrentUser()?.role): string {
     switch (role) {
+      case 'client': return '/home';
+      case 'restaurateur': return '/restaurateur';
+      case 'admin': return '/admin';
+      default: return '/login';
+    }
+  }
+
+  getWorkspaceRoute(role = this.getCurrentUser()?.role): string {
+    switch (role) {
       case 'client': return '/client';
       case 'restaurateur': return '/restaurateur';
       case 'admin': return '/admin';

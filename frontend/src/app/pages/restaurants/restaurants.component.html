@@ -1,21 +1,19 @@
 <app-shell>
-  <main class="fe-page">
+  <main class="fe-page restaurant-list-page">
     <header class="restaurant-list-header">
-      <div>
-        <span class="fe-badge fe-badge-warm">Découverte FoodExpress</span>
-        <h1>Restaurants</h1>
-        <p>Recherchez un nom, filtrez la cuisine ou choisissez les établissements ouverts.</p>
-      </div>
+      <span class="fe-badge fe-badge-warm">Découverte FoodExpress</span>
+      <h1>Restaurants</h1>
+      <p>Recherchez un nom, filtrez la cuisine ou choisissez les établissements ouverts.</p>
     </header>
 
     <section class="restaurant-filters" aria-label="Filtres restaurants">
-      <label>
+      <label for="restaurant-search">
         <span>Rechercher</span>
-        <input type="search" [formControl]="search" placeholder="Nom du restaurant" />
+        <input id="restaurant-search" type="search" [formControl]="search" placeholder="Nom du restaurant" />
       </label>
-      <label>
+      <label for="restaurant-cuisine">
         <span>Type de cuisine</span>
-        <select [value]="cuisine()" (change)="setCuisine($event)">
+        <select id="restaurant-cuisine" [value]="cuisine()" (change)="setCuisine($event)">
           <option value="">Toutes les cuisines</option>
           <option value="tunisienne">Tunisienne</option>
           <option value="italienne">Italienne</option>
@@ -24,17 +22,17 @@
           <option value="asiatique">Asiatique</option>
         </select>
       </label>
-      <label>
+      <label for="restaurant-availability">
         <span>Disponibilité</span>
-        <select [value]="availability()" (change)="setAvailability($event)">
+        <select id="restaurant-availability" [value]="availability()" (change)="setAvailability($event)">
           <option value="all">Tous</option>
           <option value="open">Ouverts</option>
           <option value="closed">Fermés</option>
         </select>
       </label>
-      <label>
+      <label for="restaurant-sort">
         <span>Trier</span>
-        <select [value]="sort()" (change)="setSort($event)">
+        <select id="restaurant-sort" [value]="sort()" (change)="setSort($event)">
           <option value="alphabetical">Nom alphabétique</option>
           <option value="featured">Mis en avant</option>
         </select>
@@ -43,30 +41,55 @@
     </section>
 
     @if (errorMessage()) {
-      <p class="fe-alert fe-alert-error" role="alert">{{ errorMessage() }}</p>
+      <p class="fe-alert fe-alert-error restaurant-state-message" role="alert">{{ errorMessage() }}</p>
     } @else if (isLoading()) {
-      <p class="fe-muted" role="status">Chargement des restaurants…</p>
+      <p class="fe-muted restaurant-state-message" role="status">Chargement des restaurants…</p>
     } @else if (restaurants().length) {
       <section class="restaurant-grid" aria-label="Liste des restaurants">
         @for (restaurant of restaurants(); track restaurant._id) {
           <article class="restaurant-card">
-            <img [src]="restaurant.imageUrl || 'https://placehold.co/600x400/e8d7b9/6b4430?text=FoodExpress'" [alt]="restaurant.nom" />
+            <div class="restaurant-card-media">
+              @if (restaurant.imageUrl) {
+                <img [src]="restaurant.imageUrl" [alt]="restaurant.nom" />
+              } @else {
+                <div class="restaurant-image-placeholder" role="img" aria-label="Image du restaurant non disponible">
+                  <svg viewBox="0 0 48 48" aria-hidden="true">
+                    <circle cx="24" cy="24" r="17"></circle>
+                    <circle cx="24" cy="24" r="11"></circle>
+                  </svg>
+                </div>
+              }
+              <span class="restaurant-status" [class.is-open]="restaurant.isOpen">{{ restaurant.isOpen ? 'Ouvert' : 'Fermé' }}</span>
+            </div>
             <div class="restaurant-card-body">
               <h2>{{ restaurant.nom }}</h2>
               <p class="restaurant-cuisine">{{ restaurant.cuisineType }}</p>
-              <p>{{ restaurant.description }}</p>
-              <p>Frais de livraison : {{ restaurant.deliveryFee | number:'1.2-2' }} DT</p>
-              <span class="restaurant-status" [class.is-open]="restaurant.isOpen">{{ restaurant.isOpen ? 'Ouvert' : 'Fermé' }}</span>
-              <a class="fe-btn fe-btn-secondary" [routerLink]="['/restaurants', restaurant._id]">Voir les détails</a>
+              <p class="restaurant-description">{{ restaurant.description }}</p>
+              <p class="restaurant-delivery">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 6h11v11H3zM14 10h4l3 3v4h-7z"></path>
+                  <circle cx="7.5" cy="18" r="1.5"></circle>
+                  <circle cx="18" cy="18" r="1.5"></circle>
+                </svg>
+                <span>Frais de livraison : <strong>{{ restaurant.deliveryFee | number:'1.2-2' }} DT</strong></span>
+              </p>
+              <a class="fe-btn fe-btn-primary" [routerLink]="['/restaurants', restaurant._id]">Voir les détails</a>
             </div>
           </article>
         }
       </section>
     } @else {
-      <p class="fe-muted">Aucun restaurant ne correspond à ces critères.</p>
+      <section class="restaurant-empty" role="status">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <circle cx="24" cy="24" r="17"></circle>
+          <circle cx="24" cy="24" r="11"></circle>
+        </svg>
+        <h2>Aucun restaurant trouvé</h2>
+        <p>Aucun restaurant ne correspond à ces critères.</p>
+      </section>
     }
 
-    <footer class="restaurant-pagination">
+    <footer class="restaurant-pagination" aria-label="Pagination des restaurants">
       <span>{{ pagination().total }} restaurant(s)</span>
       <button type="button" class="fe-btn fe-btn-secondary" [disabled]="isLoading() || pagination().page <= 1" (click)="changePage(pagination().page - 1)">Précédent</button>
       <span>Page {{ pagination().page }} / {{ pagination().totalPages || 1 }}</span>
